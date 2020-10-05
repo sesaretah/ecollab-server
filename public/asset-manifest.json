@@ -1,21 +1,23 @@
 {
   "files": {
-    "main.css": "./static/css/main.b9ed3ab7.chunk.css",
-    "main.js": "./static/js/main.c27b088a.chunk.js",
-    "main.js.map": "./static/js/main.c27b088a.chunk.js.map",
-    "runtime~main.js": "./static/js/runtime~main.d482d72d.js",
-    "runtime~main.js.map": "./static/js/runtime~main.d482d72d.js.map",
-    "static/css/2.28919931.chunk.css": "./static/css/2.28919931.chunk.css",
-    "static/js/2.160d6e84.chunk.js": "./static/js/2.160d6e84.chunk.js",
-    "static/js/2.160d6e84.chunk.js.map": "./static/js/2.160d6e84.chunk.js.map",
-    "index.html": "./index.html",
-    "precache-manifest.2c5503a10e2e7deb06e0d370275f3d23.js": "./precache-manifest.2c5503a10e2e7deb06e0d370275f3d23.js",
-    "service-worker.js": "./service-worker.js",
-    "static/css/2.28919931.chunk.css.map": "./static/css/2.28919931.chunk.css.map",
-    "static/css/main.b9ed3ab7.chunk.css.map": "./static/css/main.b9ed3ab7.chunk.css.map",
-    "static/media/icons.css": "./static/media/MaterialIcons-Regular.e79bfd88.eot",
-    "static/media/app.css": "./static/media/IRANSansWeb.d4bb655d.woff",
-    "static/media/UploadIcon.svg": "./static/media/UploadIcon.1cedb6e9.svg",
-    "static/media/font-awesome.min.css": "./static/media/fontawesome-webfont.fee66e71.woff"
-  }
+    "main.css": "/static/css/main.32458517.chunk.css",
+    "main.js": "/static/js/main.c7cff36b.chunk.js",
+    "main.js.map": "/static/js/main.c7cff36b.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.e5453d19.js",
+    "runtime-main.js.map": "/static/js/runtime-main.e5453d19.js.map",
+    "static/js/2.0cc76eb2.chunk.js": "/static/js/2.0cc76eb2.chunk.js",
+    "static/js/2.0cc76eb2.chunk.js.map": "/static/js/2.0cc76eb2.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.3ee5b468736cb8005b11f3aafa71a050.js": "/precache-manifest.3ee5b468736cb8005b11f3aafa71a050.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.32458517.chunk.css.map": "/static/css/main.32458517.chunk.css.map",
+    "static/js/2.0cc76eb2.chunk.js.LICENSE.txt": "/static/js/2.0cc76eb2.chunk.js.LICENSE.txt",
+    "static/media/bulma-rtl.css": "/static/media/IRANSansWeb.d4bb655d.woff"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e5453d19.js",
+    "static/js/2.0cc76eb2.chunk.js",
+    "static/css/main.32458517.chunk.css",
+    "static/js/main.c7cff36b.chunk.js"
+  ]
 }
