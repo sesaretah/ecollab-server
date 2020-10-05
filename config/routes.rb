@@ -40,6 +40,10 @@ Rails.application.routes.draw do
     get '/users/role', to: 'users#role'
     post '/users/change_role', to: 'users#change_role'
 
+    get '/download/:uuid', to: 'uploads#download'
+    get '/uploads/:uuid', to: 'uploads#show'
+   
+
     resources :profiles
     resources :channels
     resources :posts

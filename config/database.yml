@@ -21,7 +21,7 @@ default: &default
 
 development:
   <<: *default
-  database: shoa_dev
+  database: elearn_tools_dev
 
 
 # Warning: The database defined as "test" will be erased and
@@ -29,8 +29,8 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: shoa_test
+  database: elearn_tools_test
 
 production:
   <<: *default
-  database: shoa_prod
+  database: elearn_tools_prod
