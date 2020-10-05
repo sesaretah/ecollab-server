@@ -10,7 +10,7 @@ class UploadSerializer < ActiveModel::Serializer
 
   def converted_link
     if object.converted
-      Rails.application.routes.default_url_options[:host] + "/v1/uploads/download/#{object.uuid}"
+      Rails.application.routes.default_url_options[:host] + "v1/download/#{object.uuid}.pdf"
     end
   end
 end
