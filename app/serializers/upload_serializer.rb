@@ -1,11 +1,15 @@
 class UploadSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
-  attributes :link, :uuid, :converted, :converted_link
+  attributes :link, :uuid, :converted, :converted_link,:uploader
 
   def link
     if object.attached_document.attached?
       Rails.application.routes.default_url_options[:host] + rails_blob_url(object.attached_document, only_path: true)
     end
+  end
+
+  def uploader
+    object.user.profile.name
   end
 
   def converted_link

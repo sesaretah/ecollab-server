@@ -8,6 +8,13 @@ class V1::UploadsController < ApplicationController
     end
   end
 
+  def index
+    uploads = Upload.where(room_id: params[:room_id])
+    if !uploads.blank?
+      render json: { data: ActiveModel::SerializableResource.new(uploads, user_id: current_user.id,  each_serializer: UploadSerializer ).as_json, klass: 'Upload' }, status: :ok
+    end
+  end
+
   def show
     @upload = Upload.find_by_uuid(params[:uuid])
     if !@upload.blank?
@@ -17,6 +24,7 @@ class V1::UploadsController < ApplicationController
 
   def create
     @upload = Upload.new(upload_params)
+    @upload.user_id =  current_user.id
     if @upload.save
       render json: { data:  UploadSerializer.new(@upload).as_json, klass: 'Upload' }, status: :ok
     end

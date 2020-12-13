@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_05_151420) do
+ActiveRecord::Schema.define(version: 2020_11_26_211025) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,6 +68,19 @@ ActiveRecord::Schema.define(version: 2020_10_05_151420) do
     t.index ["notifiable_type"], name: "index_notifications_on_notifiable_type"
   end
 
+  create_table "participations", force: :cascade do |t|
+    t.integer "room_id"
+    t.integer "user_id"
+    t.string "device_id"
+    t.string "current_role"
+    t.string "uuid"
+    t.json "activity_logs"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["current_role"], name: "index_participations_on_current_role"
+    t.index ["uuid"], name: "index_participations_on_uuid"
+  end
+
   create_table "profiles", force: :cascade do |t|
     t.string "name"
     t.string "surename"
@@ -91,12 +104,51 @@ ActiveRecord::Schema.define(version: 2020_10_05_151420) do
     t.index ["user_id"], name: "index_roles_on_user_id"
   end
 
+  create_table "rooms", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.integer "user_id"
+    t.boolean "private"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "uuid"
+    t.string "secret"
+    t.string "pin"
+    t.boolean "activated"
+    t.index ["user_id"], name: "index_rooms_on_user_id"
+    t.index ["uuid"], name: "index_rooms_on_uuid"
+  end
+
+  create_table "subscribers", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "room_id"
+    t.string "rfid"
+    t.string "current_mode"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["current_mode"], name: "index_subscribers_on_current_mode"
+    t.index ["rfid"], name: "index_subscribers_on_rfid"
+    t.index ["room_id"], name: "index_subscribers_on_room_id"
+    t.index ["user_id"], name: "index_subscribers_on_user_id"
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "room_id"
+    t.string "subscription_state"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "uploads", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "uuid"
     t.boolean "converted"
+    t.integer "room_id"
+    t.integer "user_id"
+    t.index ["room_id"], name: "index_uploads_on_room_id"
     t.index ["uuid"], name: "index_uploads_on_uuid"
   end
 
@@ -118,6 +170,7 @@ ActiveRecord::Schema.define(version: 2020_10_05_151420) do
     t.datetime "last_code_datetime"
     t.datetime "last_login"
     t.string "uuid"
+    t.integer "current_role_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

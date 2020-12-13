@@ -10,9 +10,13 @@ class V1::UsersController < ApplicationController
   #end
 
   def login
-      @user = User.find_by_email(params['email'])
-      @user.notify_user if @user
-      render :json => {data: {result: 'OK'}, klass: 'Login'}.to_json , :callback => params['callback']
+      user = User.find_by_email(params['email'])
+      user.notify_user if user
+      if !user.blank?
+        render :json => {data: {result: 'OK', token: JWTWrapper.encode({ user_id: user.id }), user_id: user.id}, klass: 'Login'}.to_json , :callback => params['callback']
+      else
+        render :json => {result: 'ERROR',  error: I18n.t(:doesnt_match) }.to_json , status: :unprocessable_entity
+      end
   end
 
   def verify
@@ -25,13 +29,16 @@ class V1::UsersController < ApplicationController
   end
 
   def sign_up
-    password = SecureRandom.hex(6)
-    @user = User.create(email: params['email'], password: password, password_confirmation: password, last_login: DateTime.now)
-    if @user
-      Profile.create(name: params['name'], surename: params['surename'], user_id: @user.id)
-      @user.notify_user
+    user = User.create(email: params['email'], password: params['password'], password_confirmation: params['password'], last_login: DateTime.now)
+    if user
+      Profile.create(name: params['nickname'], user_id: user.id)
+      user.notify_user
     end
-    render :json => {data: {result: 'OK'}, klass: 'SignUp'}.to_json , :callback => params['callback']
+    if !user.blank?
+      render :json => {data: {result: 'OK', token: JWTWrapper.encode({ user_id: user.id }), user_id: user.id}, klass: 'SignUp'}.to_json , :callback => params['callback']
+    else
+      render :json => {result: 'ERROR',  error: I18n.t(:doesnt_match) }.to_json , status: :unprocessable_entity
+    end
   end
 
 

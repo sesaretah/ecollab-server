@@ -42,7 +42,7 @@ Rails.application.routes.draw do
 
     get '/download/:uuid', to: 'uploads#download'
     get '/uploads/:uuid', to: 'uploads#show'
-   
+    get '/uploads', to: 'uploads#index'
 
     resources :profiles
     resources :channels
@@ -63,7 +63,8 @@ Rails.application.routes.draw do
     resources :notification_settings
     resources :devices
     resources :rooms
-
+    resources :participations
+    
 
 
     post '/users/assignments', to: 'users#assignments'

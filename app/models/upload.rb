@@ -2,6 +2,7 @@ class Upload < ApplicationRecord
   has_one_attached :attached_document
   before_create :assign_uuid
   after_commit :prepare_pdf, on: :create
+  belongs_to :user
 
   def assign_uuid
     self.uuid = SecureRandom.hex(6)
