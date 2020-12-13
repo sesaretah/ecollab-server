@@ -89,7 +89,6 @@ Rails.application.configure do
 
   config.active_job.queue_name_prefix = "shoa"
   config.active_job.queue_name_delimiter = "_"
-  config.relative_url_root = "/server"
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
