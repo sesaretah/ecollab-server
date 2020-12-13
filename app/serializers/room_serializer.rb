@@ -1,10 +1,11 @@
 class RoomSerializer < ActiveModel::Serializer
   attributes :id, :title, :is_private, :room_id, :pin, :user_uuid, :user_fullname,
-              :is_owner
-  def room_id 
+             :is_owner
+
+  def room_id
     object.uuid.to_i
   end
-  
+
   def is_private
     object.private ? true : false
   end
@@ -19,17 +20,15 @@ class RoomSerializer < ActiveModel::Serializer
   def user_fullname
     if scope && scope[:user_id]
       user = User.find_by_id(scope[:user_id])
-      user.profile.fullname if !user.blank?
+      user.profile.fullname if !user.blank? && !user.profile.blank?
     end
   end
 
-  def is_owner 
+  def is_owner
     if scope && scope[:user_id] && object.user_id == scope[:user_id]
       true
     else
       false
     end
   end
-
-  
 end
