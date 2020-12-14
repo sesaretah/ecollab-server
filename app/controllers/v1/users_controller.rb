@@ -15,7 +15,7 @@ class V1::UsersController < ApplicationController
     if !user.blank?
       render :json => { data: { result: "OK", token: JWTWrapper.encode({ user_id: user.id }), user_id: user.id }, klass: "Login" }.to_json, :callback => params["callback"]
     else
-      render :json => { result: "ERROR", error: I18n.t(:doesnt_match) }.to_json, status: :unprocessable_entity
+      render :json => { result: "ERROR", reason: I18n.t(:doesnt_match) }.to_json, status: :unprocessable_entity
     end
   end
 
@@ -24,7 +24,7 @@ class V1::UsersController < ApplicationController
     if !user.blank?
       render :json => { data: { result: "OK", token: JWTWrapper.encode({ user_id: user.id }), user_id: user.id }, klass: "Verify" }.to_json, :callback => params["callback"]
     else
-      render :json => { result: "ERROR", error: I18n.t(:doesnt_match) }.to_json, status: :unprocessable_entity
+      render :json => { result: "ERROR", reason: I18n.t(:doesnt_match) }.to_json, status: :unprocessable_entity
     end
   end
 
@@ -32,12 +32,16 @@ class V1::UsersController < ApplicationController
     user = User.create(email: params["email"], password: params["password"], password_confirmation: params["password"], last_login: DateTime.now)
     if !user.blank?
       Profile.create(name: params["nickname"], user_id: user.id)
-      user.notify_user
+      #user.notify_user
     end
     if !user.blank?
-      render :json => { data: { result: "OK", token: JWTWrapper.encode({ user_id: user.id }), user_id: user.id }, klass: "SignUp" }.to_json, :callback => params["callback"]
+      if user.id != nil
+        render :json => { data: { result: "OK", token: JWTWrapper.encode({ user_id: user.id }), user_id: user.id }, klass: "SignUp" }.to_json, :callback => params["callback"]
+      else
+        render :json => { result: "ERROR", reason: I18n.t(:already_exist) }.to_json, status: :unprocessable_entity
+      end
     else
-      render :json => { result: "ERROR", error: I18n.t(:doesnt_match) }.to_json, status: :unprocessable_entity
+      render :json => { result: "ERROR", reason: I18n.t(:doesnt_match) }.to_json, status: :unprocessable_entity
     end
   end
 
