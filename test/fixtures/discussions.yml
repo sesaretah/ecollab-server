@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  discussable_id: 1
+  discussable_type: MyString
+  title: MyString
+  discussion_type: MyString
+  is_private: false
+
+two:
+  discussable_id: 1
+  discussable_type: MyString
+  title: MyString
+  discussion_type: MyString
+  is_private: false

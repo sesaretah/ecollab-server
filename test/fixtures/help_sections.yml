@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  section: MyString
+  content: MyString
+  quill_content: 
+
+two:
+  section: MyString
+  content: MyString
+  quill_content: 

@@ -9,11 +9,14 @@ Rails.application.routes.draw do
     get "/profiles/search", to: "profiles#search"
     put "/profiles", to: "profiles#update"
     get "/profiles/my", to: "profiles#my"
+    get "/profiles/my/:id", to: "profiles#my"
     post "/profiles/add_experties/:id", to: "profiles#add_experties"
     post "/profiles/remove_experties/:id", to: "profiles#remove_experties"
 
     get "/posts/search", to: "posts#search"
     get "/posts/delete", to: "posts#destroy"
+
+    get "/flyers/delete", to: "flyers#destroy"
 
     get "/channels/search", to: "channels#search"
     get "/channels/my", to: "channels#my"
@@ -40,6 +43,10 @@ Rails.application.routes.draw do
     get "/uploads/:uuid", to: "uploads#show"
     get "/uploads", to: "uploads#index"
 
+    get "/tags/search", to: "tags#search"
+
+    get "attendances/delete", to: "attendances#destroy"
+
     resources :profiles
     resources :channels
     resources :posts
@@ -60,6 +67,10 @@ Rails.application.routes.draw do
     resources :devices
     resources :rooms
     resources :participations
+    resources :events
+    resources :meetings
+    resources :flyers
+    resources :attendances
 
     post "/users/assignments", to: "users#assignments"
     get "/users/assignments/delete", to: "users#delete_assignment"

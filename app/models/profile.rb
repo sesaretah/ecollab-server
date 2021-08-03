@@ -8,6 +8,10 @@ class Profile < ApplicationRecord
     "#{self.name} #{self.surename}"
   end
 
+  def tags
+    return Tag.titler(self.user.tags)
+  end
+
   def fullname
     self.nickname
   end
@@ -23,5 +27,4 @@ class Profile < ApplicationRecord
       Rails.application.routes.default_url_options[:host] + "/images/default.png"
     end
   end
-
 end

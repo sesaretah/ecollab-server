@@ -1,13 +1,20 @@
 class ProfileSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
-  attributes :id, :name, :surename, :fullname, :bio,  
-              :avatar, :metas, :last_login, :channels, 
-              :experties, :followers, :followees, :likes, :bookmarks, :follows,
-              :editable
+  include ActionView::Helpers::TextHelper
+
+  attributes :id, :name, :surename, :fullname, :bio,
+             :avatar, :last_login, :editable, :country, :initials, :tags,
+             :user_id, :short_bio, :tags
 
   belongs_to :user
 
+  def tags
+    object.user.tags
+  end
 
+  def short_bio
+    truncate(object.bio, :length => 40)
+  end
 
   def editable
     if scope && scope[:user_id] && object.user_id == scope[:user_id]
@@ -17,50 +24,24 @@ class ProfileSerializer < ActiveModel::Serializer
     end
   end
 
-  def channels
-    if scope && scope[:user_id] && object.privacy_rule('view_channels', scope[:user_id])
-      object.user.channels
-    else 
-      return []
+  def initials
+    splited = object.name.split(" ")
+    if splited.length > 1
+      return "#{splited[0][0].capitalize}#{splited[1][0].capitalize}"
+    else
+      return "#{splited[0][0].capitalize}#{splited[0][1].capitalize}"
     end
-  end 
+  end
+
   def last_login
     object.user.last_login
   end
 
   def bio
-    if object.bio.blank? 
+    if object.bio.blank?
       return ""
-    else 
+    else
       object.bio
-    end
-  end
-  
-  def metas
-    result = []
-    for meta in Meta.all
-      result << {meta: MetaSerializer.new(meta).as_json, actuals: ActiveModel::SerializableResource.new(meta.actuals,  each_serializer: ActualSerializer ).as_json}
-    end
-    return result
-  end
-
-  def followers
-    if scope && scope[:user_id] && object.privacy_rule('view_followers', scope[:user_id])
-      result = []
-      for follower in object.profile_followers
-        result << {id: follower.profile.id, user_id: follower.id, fullname: follower.profile.fullname, avatar: follower.profile.profile_avatar}
-      end
-      return result
-    end
-  end
-
-  def followees
-    if scope && scope[:user_id] && object.privacy_rule('view_followees', scope[:user_id])
-      result = []
-      for follower in object.profile_followees
-        result << {id: follower.profile.id, user_id: follower.id, fullname: follower.profile.fullname, avatar: follower.profile.profile_avatar}
-      end
-      return result
     end
   end
 

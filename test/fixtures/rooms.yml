@@ -2,12 +2,18 @@
 
 one:
   title: MyString
-  description: MyText
-  user_id: 1
-  private: false
+  is_private: false
+  uuid: MyString
+  secret: MyString
+  pin: MyString
+  activated: false
+  moderator_ids: 
 
 two:
   title: MyString
-  description: MyText
-  user_id: 1
-  private: false
+  is_private: false
+  uuid: MyString
+  secret: MyString
+  pin: MyString
+  activated: false
+  moderator_ids: 

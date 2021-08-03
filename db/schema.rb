@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_26_211025) do
+ActiveRecord::Schema.define(version: 2021_08_03_202625) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,12 +36,109 @@ ActiveRecord::Schema.define(version: 2020_11_26_211025) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
+  create_table "attendances", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "attendable_id"
+    t.string "attendable_type"
+    t.integer "label_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "role_id"
+    t.index ["attendable_id"], name: "index_attendances_on_attendable_id"
+    t.index ["attendable_type"], name: "index_attendances_on_attendable_type"
+    t.index ["label_id"], name: "index_attendances_on_label_id"
+    t.index ["role_id"], name: "index_attendances_on_role_id"
+    t.index ["user_id"], name: "index_attendances_on_user_id"
+  end
+
   create_table "devices", force: :cascade do |t|
     t.integer "user_id"
     t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_devices_on_user_id"
+  end
+
+  create_table "discussions", force: :cascade do |t|
+    t.integer "discussable_id"
+    t.string "discussable_type"
+    t.string "title"
+    t.string "discussion_type"
+    t.boolean "is_private"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["discussable_id"], name: "index_discussions_on_discussable_id"
+    t.index ["discussable_type"], name: "index_discussions_on_discussable_type"
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.string "title"
+    t.string "event_type"
+    t.text "info"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.boolean "is_private"
+    t.index ["is_private"], name: "index_events_on_is_private"
+    t.index ["user_id"], name: "index_events_on_user_id"
+  end
+
+  create_table "flyers", force: :cascade do |t|
+    t.string "title"
+    t.text "content"
+    t.integer "user_id"
+    t.integer "advertisable_id"
+    t.string "advertisable_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.json "quill_content"
+    t.boolean "is_default"
+    t.index ["advertisable_id"], name: "index_flyers_on_advertisable_id"
+    t.index ["advertisable_type"], name: "index_flyers_on_advertisable_type"
+    t.index ["user_id"], name: "index_flyers_on_user_id"
+  end
+
+  create_table "help_sections", force: :cascade do |t|
+    t.string "section"
+    t.string "content"
+    t.json "quill_content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["section"], name: "index_help_sections_on_section"
+  end
+
+  create_table "icons", force: :cascade do |t|
+    t.text "content"
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "labels", force: :cascade do |t|
+    t.string "title"
+    t.string "color"
+    t.integer "icon_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["icon_id"], name: "index_labels_on_icon_id"
+  end
+
+  create_table "meetings", force: :cascade do |t|
+    t.string "title"
+    t.text "info"
+    t.integer "event_id"
+    t.string "meeting_type"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.string "location"
+    t.boolean "is_private"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "capacity"
+    t.string "external_link"
+    t.integer "user_id"
+    t.index ["event_id"], name: "index_meetings_on_event_id"
+    t.index ["user_id"], name: "index_meetings_on_user_id"
   end
 
   create_table "notification_settings", force: :cascade do |t|
@@ -68,19 +165,6 @@ ActiveRecord::Schema.define(version: 2020_11_26_211025) do
     t.index ["notifiable_type"], name: "index_notifications_on_notifiable_type"
   end
 
-  create_table "participations", force: :cascade do |t|
-    t.integer "room_id"
-    t.integer "user_id"
-    t.string "device_id"
-    t.string "current_role"
-    t.string "uuid"
-    t.json "activity_logs"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["current_role"], name: "index_participations_on_current_role"
-    t.index ["uuid"], name: "index_participations_on_uuid"
-  end
-
   create_table "profiles", force: :cascade do |t|
     t.string "name"
     t.string "surename"
@@ -91,6 +175,7 @@ ActiveRecord::Schema.define(version: 2020_11_26_211025) do
     t.integer "user_id"
     t.string "faculty"
     t.json "privacy"
+    t.string "country"
     t.index ["user_id"], name: "index_profiles_on_user_id"
   end
 
@@ -106,16 +191,20 @@ ActiveRecord::Schema.define(version: 2020_11_26_211025) do
 
   create_table "rooms", force: :cascade do |t|
     t.string "title"
-    t.text "description"
-    t.integer "user_id"
-    t.boolean "private"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.boolean "is_private"
     t.string "uuid"
     t.string "secret"
     t.string "pin"
     t.boolean "activated"
-    t.index ["user_id"], name: "index_rooms_on_user_id"
+    t.json "moderator_ids"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "meeting_id"
+    t.string "vuuid"
+    t.string "vpin"
+    t.string "vsecret"
+    t.index ["is_private"], name: "index_rooms_on_is_private"
+    t.index ["meeting_id"], name: "index_rooms_on_meeting_id"
     t.index ["uuid"], name: "index_rooms_on_uuid"
   end
 
@@ -140,15 +229,29 @@ ActiveRecord::Schema.define(version: 2020_11_26_211025) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "taggings", force: :cascade do |t|
+    t.integer "taggable_id"
+    t.string "taggable_type"
+    t.integer "tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["taggable_id"], name: "index_taggings_on_taggable_id"
+    t.index ["taggable_type"], name: "index_taggings_on_taggable_type"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "uploads", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "uuid"
     t.boolean "converted"
-    t.integer "room_id"
     t.integer "user_id"
-    t.index ["room_id"], name: "index_uploads_on_room_id"
     t.index ["uuid"], name: "index_uploads_on_uuid"
   end
 
@@ -169,8 +272,8 @@ ActiveRecord::Schema.define(version: 2020_11_26_211025) do
     t.string "last_code"
     t.datetime "last_code_datetime"
     t.datetime "last_login"
-    t.string "uuid"
     t.integer "current_role_id"
+    t.string "uuid"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

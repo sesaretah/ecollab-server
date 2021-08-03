@@ -31,7 +31,7 @@ class V1::UsersController < ApplicationController
   def sign_up
     user = User.create(email: params["email"], password: params["password"], password_confirmation: params["password"], last_login: DateTime.now)
     if !user.blank?
-      Profile.create(name: params["nickname"], user_id: user.id)
+      Profile.create(name: params["name"], user_id: user.id)
       #user.notify_user
     end
     if !user.blank?

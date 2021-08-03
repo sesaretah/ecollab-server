@@ -21,7 +21,7 @@ default: &default
 
 development:
   <<: *default
-  database: elearn_tools_dev
+  database: wevent_dev
 
 
 # Warning: The database defined as "test" will be erased and
@@ -29,8 +29,8 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: elearn_tools_test
+  database: wevent_test
 
 production:
   <<: *default
-  database: elearn_tools_prod
+  database: wevent_prod
