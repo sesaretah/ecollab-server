@@ -1,25 +1,27 @@
 {
   "files": {
-    "main.css": "./static/css/main.652a5cde.chunk.css",
-    "main.js": "./static/js/main.b7a79f90.chunk.js",
-    "main.js.map": "./static/js/main.b7a79f90.chunk.js.map",
-    "runtime-main.js": "./static/js/runtime-main.1d9a263e.js",
-    "runtime-main.js.map": "./static/js/runtime-main.1d9a263e.js.map",
-    "static/css/2.6648fc7c.chunk.css": "./static/css/2.6648fc7c.chunk.css",
-    "static/js/2.6894365b.chunk.js": "./static/js/2.6894365b.chunk.js",
-    "static/js/2.6894365b.chunk.js.map": "./static/js/2.6894365b.chunk.js.map",
-    "index.html": "./index.html",
-    "precache-manifest.8d190d271064f4c20aa811ff777e95b0.js": "./precache-manifest.8d190d271064f4c20aa811ff777e95b0.js",
-    "service-worker.js": "./service-worker.js",
-    "static/css/2.6648fc7c.chunk.css.map": "./static/css/2.6648fc7c.chunk.css.map",
-    "static/css/main.652a5cde.chunk.css.map": "./static/css/main.652a5cde.chunk.css.map",
-    "static/js/2.6894365b.chunk.js.LICENSE.txt": "./static/js/2.6894365b.chunk.js.LICENSE.txt"
+    "main.css": "/static/css/main.cc5a4fd5.chunk.css",
+    "main.js": "/static/js/main.b20a94c0.chunk.js",
+    "main.js.map": "/static/js/main.b20a94c0.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.367d2e9a.js",
+    "runtime-main.js.map": "/static/js/runtime-main.367d2e9a.js.map",
+    "static/css/2.d669ce7b.chunk.css": "/static/css/2.d669ce7b.chunk.css",
+    "static/js/2.06259880.chunk.js": "/static/js/2.06259880.chunk.js",
+    "static/js/2.06259880.chunk.js.map": "/static/js/2.06259880.chunk.js.map",
+    "static/js/3.316e3c8e.chunk.js": "/static/js/3.316e3c8e.chunk.js",
+    "static/js/3.316e3c8e.chunk.js.map": "/static/js/3.316e3c8e.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/2.d669ce7b.chunk.css.map": "/static/css/2.d669ce7b.chunk.css.map",
+    "static/css/main.cc5a4fd5.chunk.css.map": "/static/css/main.cc5a4fd5.chunk.css.map",
+    "static/js/2.06259880.chunk.js.LICENSE.txt": "/static/js/2.06259880.chunk.js.LICENSE.txt",
+    "static/media/app.css": "/static/media/IRANSansWeb.bbf8f452.ttf",
+    "static/media/logo.6ce24c58.svg": "/static/media/logo.6ce24c58.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.1d9a263e.js",
-    "static/css/2.6648fc7c.chunk.css",
-    "static/js/2.6894365b.chunk.js",
-    "static/css/main.652a5cde.chunk.css",
-    "static/js/main.b7a79f90.chunk.js"
+    "static/js/runtime-main.367d2e9a.js",
+    "static/css/2.d669ce7b.chunk.css",
+    "static/js/2.06259880.chunk.js",
+    "static/css/main.cc5a4fd5.chunk.css",
+    "static/js/main.b20a94c0.chunk.js"
   ]
 }

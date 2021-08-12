@@ -1,14 +1,15 @@
 class Meeting < ApplicationRecord
   after_create :setup_room
 
-  has_many :attendances, as: :attendable
-  has_many :discussions, as: :discussable
-  has_many :flyers, as: :advertisable
+  has_many :attendances, as: :attendable, dependent: :destroy
+  has_many :discussions, as: :discussable, dependent: :destroy
+  has_many :flyers, as: :advertisable, dependent: :destroy
+  has_many :uploads, as: :uploadable, dependent: :destroy
 
-  has_many :taggings, as: :taggable
+  has_many :taggings, as: :taggable, dependent: :destroy
   has_many :tags, through: :taggings
 
-  has_one :room
+  has_one :room, dependent: :destroy
 
   belongs_to :event
 

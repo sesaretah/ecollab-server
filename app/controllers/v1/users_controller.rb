@@ -57,7 +57,7 @@ class V1::UsersController < ApplicationController
 
   def validate_token
     if !current_user.blank?
-      render :json => { data: { result: "OK", token: JWTWrapper.encode({ user_id: current_user.id }), user_id: current_user.id }, klass: "Validate" }.to_json, :callback => params["callback"]
+      render :json => { data: { result: "OK", name: current_user.profile.name, initials: current_user.profile.initials, uuid: current_user.uuid, token: JWTWrapper.encode({ user_id: current_user.id }), user_id: current_user.id }, klass: "Validate" }.to_json, :callback => params["callback"]
     else
       render json: { data: [], klass: "Error" }, status: :ok
     end

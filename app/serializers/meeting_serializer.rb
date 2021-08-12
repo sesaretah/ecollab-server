@@ -1,9 +1,13 @@
 class MeetingSerializer < ActiveModel::Serializer
+  include Rails.application.routes.url_helpers
+  include ActionView::Helpers::TextHelper
   attributes :id, :title, :start_time, :end_time,
              :capacity, :meeting_type, :info,
-             :external_link, :attendees, :tags, :is_private, :room_id
+             :external_link, :attendees, :tags, :is_private, :room_id,
+             :start_day, :end_day, :cover, :truncated_info
   belongs_to :event, serializer: EventSerializer
   has_many :flyers, serializer: FlyerSerializer
+  has_many :uploads, serializer: UploadSerializer
 
   def attendees
     user_ids = object.attendances.pluck(:user_id)
@@ -17,5 +21,28 @@ class MeetingSerializer < ActiveModel::Serializer
 
   def room_id
     object.room.id if !object.room.blank?
+  end
+
+  def start_day
+    object.start_time.in_time_zone("Tehran").beginning_of_day
+  end
+
+  def end_day
+    object.end_time.in_time_zone("Tehran").end_of_day
+  end
+
+  def truncated_info
+    truncate(object.info, :length => 200)
+  end
+
+  def cover
+    upload = Upload.where("uploadable_type = ? and uploadable_id = ?", "Meeting", object.id).last
+    if !upload.blank? && upload.attached_document.attached? && !upload.crop_settings.blank?
+      dimensions = "#{upload.crop_settings["width"]}x#{upload.crop_settings["height"]}"
+      coord = "#{upload.crop_settings["x"]}+#{upload.crop_settings["y"]}"
+      Rails.application.routes.default_url_options[:host] + rails_representation_url(upload.attached_document.variant(
+        crop: "#{dimensions}+#{coord}",
+      ).processed, only_path: true)
+    end
   end
 end

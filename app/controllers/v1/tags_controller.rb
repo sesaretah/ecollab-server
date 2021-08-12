@@ -4,6 +4,16 @@ class V1::TagsController < ApplicationController
     render json: { items: ActiveModel::SerializableResource.new(tags, each_serializer: TagSerializer).as_json }, status: :ok
   end
 
+  def top
+    tags = Tag.top_used
+    render json: { data: ActiveModel::SerializableResource.new(tags, each_serializer: TagSerializer).as_json, klass: "Tag" }, status: :ok
+  end
+
+  def index
+    tags = Tag.all
+    render json: { data: ActiveModel::SerializableResource.new(tags, each_serializer: TagSerializer).as_json, klass: "Tag" }, status: :ok
+  end
+
   def create
     @tag = Tag.new(tag_params)
     @tag.user_id = current_user.id

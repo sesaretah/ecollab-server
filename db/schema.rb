@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_03_202625) do
+ActiveRecord::Schema.define(version: 2021_08_11_090838) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,8 +44,10 @@ ActiveRecord::Schema.define(version: 2021_08_03_202625) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "role_id"
+    t.string "duty"
     t.index ["attendable_id"], name: "index_attendances_on_attendable_id"
     t.index ["attendable_type"], name: "index_attendances_on_attendable_type"
+    t.index ["duty"], name: "index_attendances_on_duty"
     t.index ["label_id"], name: "index_attendances_on_label_id"
     t.index ["role_id"], name: "index_attendances_on_role_id"
     t.index ["user_id"], name: "index_attendances_on_user_id"
@@ -79,8 +81,22 @@ ActiveRecord::Schema.define(version: 2021_08_03_202625) do
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.boolean "is_private"
+    t.json "crop_settings"
+    t.date "start_date"
+    t.date "end_date"
     t.index ["is_private"], name: "index_events_on_is_private"
     t.index ["user_id"], name: "index_events_on_user_id"
+  end
+
+  create_table "exhibitions", force: :cascade do |t|
+    t.string "title"
+    t.string "info"
+    t.integer "event_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["event_id"], name: "index_exhibitions_on_event_id"
+    t.index ["user_id"], name: "index_exhibitions_on_user_id"
   end
 
   create_table "flyers", force: :cascade do |t|
@@ -179,6 +195,18 @@ ActiveRecord::Schema.define(version: 2021_08_03_202625) do
     t.index ["user_id"], name: "index_profiles_on_user_id"
   end
 
+  create_table "questions", force: :cascade do |t|
+    t.string "content"
+    t.string "questionable_type"
+    t.integer "questionable_id"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["questionable_id"], name: "index_questions_on_questionable_id"
+    t.index ["questionable_type"], name: "index_questions_on_questionable_type"
+    t.index ["user_id"], name: "index_questions_on_user_id"
+  end
+
   create_table "roles", force: :cascade do |t|
     t.string "title"
     t.json "ability"
@@ -252,6 +280,14 @@ ActiveRecord::Schema.define(version: 2021_08_03_202625) do
     t.string "uuid"
     t.boolean "converted"
     t.integer "user_id"
+    t.string "uploadable_type"
+    t.integer "uploadable_id"
+    t.string "upload_type"
+    t.boolean "is_private"
+    t.json "crop_settings"
+    t.index ["upload_type"], name: "index_uploads_on_upload_type"
+    t.index ["uploadable_id"], name: "index_uploads_on_uploadable_id"
+    t.index ["uploadable_type"], name: "index_uploads_on_uploadable_type"
     t.index ["uuid"], name: "index_uploads_on_uuid"
   end
 

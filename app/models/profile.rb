@@ -12,6 +12,15 @@ class Profile < ApplicationRecord
     return Tag.titler(self.user.tags)
   end
 
+  def initials
+    splited = self.name.split(" ")
+    if splited.length > 1
+      return "#{splited[0][0].capitalize}#{splited[1][0].capitalize}"
+    else
+      return "#{splited[0][0].capitalize}#{splited[0][1].capitalize}"
+    end
+  end
+
   def fullname
     self.nickname
   end

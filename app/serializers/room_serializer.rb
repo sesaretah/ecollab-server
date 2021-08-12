@@ -1,6 +1,6 @@
 class RoomSerializer < ActiveModel::Serializer
   attributes :id, :title, :is_private, :uuid, :pin, :user_uuid, :user_fullname,
-             :is_owner, :is_admin, :vuuid, :vpin
+             :is_owner, :is_admin, :vuuid, :vpin, :secret, :is_presenter, :is_moderator, :is_speaker
 
   def user_uuid
     if scope && scope[:user_id]
@@ -21,6 +21,24 @@ class RoomSerializer < ActiveModel::Serializer
       true
     else
       false
+    end
+  end
+
+  def is_presenter
+    if scope && scope[:user_id]
+      object.meeting.attendances.where(duty: "presenter", user_id: scope[:user_id]).any?
+    end
+  end
+
+  def is_moderator
+    if scope && scope[:user_id]
+      object.meeting.attendances.where(duty: "moderator", user_id: scope[:user_id]).any?
+    end
+  end
+
+  def is_speaker
+    if scope && scope[:user_id]
+      object.meeting.attendances.where(duty: "speaker", user_id: scope[:user_id]).any?
     end
   end
 

@@ -44,8 +44,13 @@ Rails.application.routes.draw do
     get "/uploads", to: "uploads#index"
 
     get "/tags/search", to: "tags#search"
+    get "/tags/top", to: "tags#top"
 
-    get "attendances/delete", to: "attendances#destroy"
+    get "/attendances/delete", to: "attendances#destroy"
+    post "/attendances/change_duty", to: "attendances#change_duty"
+
+    get "/events/tags", to: "events#tags"
+    get "/events/meetings", to: "events#meetings"
 
     resources :profiles
     resources :channels
@@ -69,8 +74,11 @@ Rails.application.routes.draw do
     resources :participations
     resources :events
     resources :meetings
+    resources :exhibitions
     resources :flyers
+    resources :questions
     resources :attendances
+    resources :tags
 
     post "/users/assignments", to: "users#assignments"
     get "/users/assignments/delete", to: "users#delete_assignment"

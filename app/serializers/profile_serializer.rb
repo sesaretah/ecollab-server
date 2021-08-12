@@ -25,12 +25,7 @@ class ProfileSerializer < ActiveModel::Serializer
   end
 
   def initials
-    splited = object.name.split(" ")
-    if splited.length > 1
-      return "#{splited[0][0].capitalize}#{splited[1][0].capitalize}"
-    else
-      return "#{splited[0][0].capitalize}#{splited[0][1].capitalize}"
-    end
+    object.initials
   end
 
   def last_login

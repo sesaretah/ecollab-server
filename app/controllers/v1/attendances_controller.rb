@@ -4,6 +4,13 @@ class V1::AttendancesController < ApplicationController
     render json: { items: ActiveModel::SerializableResource.new(attendances, each_serializer: AttendanceSerializer).as_json }, status: :ok
   end
 
+  def change_duty
+    @attendance = Attendance.find(params[:id])
+    @attendance.duty = params[:duty]
+    @attendance.save
+    render json: { data: AttendanceSerializer.new(@attendance, scope: { user_id: current_user.id }).as_json, klass: "Attendance" }, status: :ok
+  end
+
   def show
     @attendance = Attendance.find(params[:id])
     render json: { data: AttendanceSerializer.new(@attendance, scope: { user_id: current_user.id }).as_json, klass: "Attendance" }, status: :ok
@@ -16,6 +23,7 @@ class V1::AttendancesController < ApplicationController
   def create
     @attendance = Attendance.new(attendance_params)
     @attendance.user_id = params[:user_id]
+    @attendance.duty = "presenter"
     if @attendance.save
       render json: { data: AttendanceSerializer.new(@attendance).as_json, klass: "Attendance" }, status: :ok
     end

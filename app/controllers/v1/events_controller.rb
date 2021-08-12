@@ -4,6 +4,18 @@ class V1::EventsController < ApplicationController
     render json: { items: ActiveModel::SerializableResource.new(events, each_serializer: EventSerializer).as_json }, status: :ok
   end
 
+  def tags
+    @event = Event.find(params[:id])
+    tags = @event.meeting_tags
+    render json: { data: ActiveModel::SerializableResource.new(tags, each_serializer: TagSerializer).as_json, klass: "Tag" }, status: :ok
+  end
+
+  def meetings
+    @event = Event.find(params[:id])
+    meetings = @event.meetings.joins(:taggings).where("start_time >= ? and end_time <= ? and taggings.tag_id in (?)", Time.at(params[:start_time].to_i / 1000), Time.at(params[:end_time].to_i / 1000), params[:tag_ids].split(","))
+    render json: { data: ActiveModel::SerializableResource.new(meetings, user_id: current_user.id, each_serializer: MeetingSerializer, scope: { user_id: current_user.id }).as_json, klass: "Meeting" }, status: :ok
+  end
+
   def show
     @event = Event.find(params[:id])
     render json: { data: EventSerializer.new(@event, scope: { user_id: current_user.id }).as_json, klass: "Event" }, status: :ok

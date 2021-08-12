@@ -6,7 +6,7 @@ class Attendance < ApplicationRecord
   before_save :check_for_duplicates?
 
   def check_for_duplicates?
-    if Attendance.where(attendable_id: self.attendable_id, attendable_type: self.attendable_type, user_id: self.user_id).any?
+    if self.id.blank? && Attendance.where(attendable_id: self.attendable_id, attendable_type: self.attendable_type, user_id: self.user_id).any?
       raise "Duplicate"
     end
   end
