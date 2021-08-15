@@ -14,4 +14,13 @@ class Attendance < ApplicationRecord
   def profile
     self.user.profile
   end
+
+  def attendable_owner
+    attendable = self.attendable_type.classify.constantize.find(self.attendable_id)
+    if !attendable.blank? && attendable.user_id != self.user_id
+      true
+    else
+      false
+    end
+  end
 end

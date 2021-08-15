@@ -13,11 +13,17 @@ class Event < ApplicationRecord
 
   has_one_attached :cover_image
   #before_save :check_cropping
+  after_create :add_admin
+
+  def add_admin
+    Attendance.create(attendable_id: self.id, attendable_type: "Event", user_id: self.user_id, duty: "moderator")
+  end
+
+  def is_admin(user_id)
+    Attendance.where(attendable_id: self.id, attendable_type: "Event", user_id: user_id, duty: "moderator").any?
+  end
 
   def meeting_tags
-    # tag_ids = Tagging.where("taggable_id in (?) and taggable_type = ?", self.meetings.pluck(:id), "Meeting").pluck(:tag_id)
-    #return Tag.where("id in (?)", tag_ids.uniq)
-
     Tag
       .left_joins(:taggings)
       .where("taggable_id in (?) and taggable_type = ?", self.meetings.pluck(:id), "Meeting")

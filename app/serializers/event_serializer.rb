@@ -3,7 +3,8 @@ class EventSerializer < ActiveModel::Serializer
   include ActionView::Helpers::TextHelper
   attributes :id, :title, :info, :event_type,
              :attendees, :tags, :is_private,
-             :cover, :start_date, :end_date, :truncated_info
+             :cover, :start_date, :end_date, :truncated_info,
+             :is_admin
   has_many :meetings, serializer: MeetingSerializer
   has_many :flyers, serializer: FlyerSerializer
   has_many :uploads, serializer: UploadSerializer
@@ -30,6 +31,14 @@ class EventSerializer < ActiveModel::Serializer
       Rails.application.routes.default_url_options[:host] + rails_representation_url(upload.attached_document.variant(
         crop: "#{dimensions}+#{coord}",
       ).processed, only_path: true)
+    end
+  end
+
+  def is_admin
+    if scope && scope[:user_id] && object.is_admin(scope[:user_id])
+      return true
+    else
+      return false
     end
   end
 end

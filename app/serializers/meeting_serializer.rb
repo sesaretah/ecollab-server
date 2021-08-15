@@ -4,7 +4,8 @@ class MeetingSerializer < ActiveModel::Serializer
   attributes :id, :title, :start_time, :end_time,
              :capacity, :meeting_type, :info,
              :external_link, :attendees, :tags, :is_private, :room_id,
-             :start_day, :end_day, :cover, :truncated_info
+             :start_day, :end_day, :cover, :truncated_info, :is_admin,
+             :room_uuid
   belongs_to :event, serializer: EventSerializer
   has_many :flyers, serializer: FlyerSerializer
   has_many :uploads, serializer: UploadSerializer
@@ -21,6 +22,10 @@ class MeetingSerializer < ActiveModel::Serializer
 
   def room_id
     object.room.id if !object.room.blank?
+  end
+
+  def room_uuid
+    object.room.uuid if !object.room.blank?
   end
 
   def start_day
@@ -43,6 +48,14 @@ class MeetingSerializer < ActiveModel::Serializer
       Rails.application.routes.default_url_options[:host] + rails_representation_url(upload.attached_document.variant(
         crop: "#{dimensions}+#{coord}",
       ).processed, only_path: true)
+    end
+  end
+
+  def is_admin
+    if scope && scope[:user_id] && object.is_admin(scope[:user_id])
+      return true
+    else
+      return false
     end
   end
 end

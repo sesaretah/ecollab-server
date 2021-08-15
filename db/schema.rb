@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_11_090838) do
+ActiveRecord::Schema.define(version: 2021_08_15_130419) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,6 +34,16 @@ ActiveRecord::Schema.define(version: 2021_08_11_090838) do
     t.string "checksum", null: false
     t.datetime "created_at", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "answers", force: :cascade do |t|
+    t.integer "question_id"
+    t.string "content"
+    t.integer "answer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_answers_on_answer_id"
+    t.index ["question_id"], name: "index_answers_on_question_id"
   end
 
   create_table "attendances", force: :cascade do |t|
@@ -202,6 +212,7 @@ ActiveRecord::Schema.define(version: 2021_08_11_090838) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_private"
     t.index ["questionable_id"], name: "index_questions_on_questionable_id"
     t.index ["questionable_type"], name: "index_questions_on_questionable_type"
     t.index ["user_id"], name: "index_questions_on_user_id"
@@ -231,6 +242,8 @@ ActiveRecord::Schema.define(version: 2021_08_11_090838) do
     t.string "vuuid"
     t.string "vpin"
     t.string "vsecret"
+    t.integer "exhibition_id"
+    t.index ["exhibition_id"], name: "index_rooms_on_exhibition_id"
     t.index ["is_private"], name: "index_rooms_on_is_private"
     t.index ["meeting_id"], name: "index_rooms_on_meeting_id"
     t.index ["uuid"], name: "index_rooms_on_uuid"

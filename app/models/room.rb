@@ -6,7 +6,8 @@ class Room < ApplicationRecord
 
   # has_many :users, through: :participations
   # has_many :participations
-  belongs_to :meeting
+  belongs_to :meeting, optional: true
+  belongs_to :exhibition, optional: true
 
   def set_uuid
     self.uuid = SecureRandom.random_number(10000000)
@@ -29,5 +30,13 @@ class Room < ApplicationRecord
 
   def destroy_janus
     RoomDestroyJob.perform_later(self.uuid, self.secret)
+  end
+
+  def ref_class
+    if !self.meeting_id.blank?
+      return self.meeting
+    else
+      return self.exhibition
+    end
   end
 end

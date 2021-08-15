@@ -1,11 +1,13 @@
 class ExhibitionSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
   include ActionView::Helpers::TextHelper
-  attributes :id, :title, :info, :tags, :cover, :truncated_info
+  attributes :id, :title, :info, :tags, :cover, :truncated_info,
+             :is_admin, :attendees, :room_id, :room_uuid
 
   belongs_to :event, serializer: EventSerializer
   has_many :flyers, serializer: FlyerSerializer
   has_many :uploads, serializer: UploadSerializer
+  has_many :questions, serializer: QuestionSerializer
 
   def tags
     object.tags
@@ -13,6 +15,20 @@ class ExhibitionSerializer < ActiveModel::Serializer
 
   def truncated_info
     truncate(object.info, :length => 200)
+  end
+
+  def room_id
+    object.room.id if !object.room.blank?
+  end
+
+  def room_uuid
+    object.room.uuid if !object.room.blank?
+  end
+
+  def attendees
+    user_ids = object.attendances.pluck(:user_id)
+    profiles = Profile.where("user_id in (?)", user_ids)
+    return ActiveModel::SerializableResource.new(profiles, each_serializer: ProfileSerializer).as_json
   end
 
   def cover
@@ -23,6 +39,14 @@ class ExhibitionSerializer < ActiveModel::Serializer
       Rails.application.routes.default_url_options[:host] + rails_representation_url(upload.attached_document.variant(
         crop: "#{dimensions}+#{coord}",
       ).processed, only_path: true)
+    end
+  end
+
+  def is_admin
+    if scope && scope[:user_id] && object.is_admin(scope[:user_id])
+      return true
+    else
+      return false
     end
   end
 end

@@ -6,8 +6,10 @@ class V1::AttendancesController < ApplicationController
 
   def change_duty
     @attendance = Attendance.find(params[:id])
-    @attendance.duty = params[:duty]
-    @attendance.save
+    if @attendance.attendable_owner
+      @attendance.duty = params[:duty]
+      @attendance.save
+    end
     render json: { data: AttendanceSerializer.new(@attendance, scope: { user_id: current_user.id }).as_json, klass: "Attendance" }, status: :ok
   end
 
@@ -31,7 +33,7 @@ class V1::AttendancesController < ApplicationController
 
   def destroy
     @attendance = Attendance.find(params[:id])
-    if @attendance.destroy
+    if @attendance.attendable_owner && @attendance.destroy
       render json: { data: "OK" }, status: :ok
     else
       render json: { data: @attendance.errors.full_messages }, status: :ok

@@ -17,7 +17,7 @@ class RoomSerializer < ActiveModel::Serializer
   end
 
   def is_owner
-    if scope && scope[:user_id] && object.meeting.user_id == scope[:user_id]
+    if scope && scope[:user_id] && object.ref_class.user_id == scope[:user_id]
       true
     else
       false
@@ -26,19 +26,19 @@ class RoomSerializer < ActiveModel::Serializer
 
   def is_presenter
     if scope && scope[:user_id]
-      object.meeting.attendances.where(duty: "presenter", user_id: scope[:user_id]).any?
+      object.ref_class.attendances.where(duty: "presenter", user_id: scope[:user_id]).any?
     end
   end
 
   def is_moderator
     if scope && scope[:user_id]
-      object.meeting.attendances.where(duty: "moderator", user_id: scope[:user_id]).any?
+      object.ref_class.attendances.where(duty: "moderator", user_id: scope[:user_id]).any?
     end
   end
 
   def is_speaker
     if scope && scope[:user_id]
-      object.meeting.attendances.where(duty: "speaker", user_id: scope[:user_id]).any?
+      object.ref_class.attendances.where(duty: "speaker", user_id: scope[:user_id]).any?
     end
   end
 

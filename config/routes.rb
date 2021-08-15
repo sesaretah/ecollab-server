@@ -79,6 +79,7 @@ Rails.application.routes.draw do
     resources :questions
     resources :attendances
     resources :tags
+    resources :questions
 
     post "/users/assignments", to: "users#assignments"
     get "/users/assignments/delete", to: "users#delete_assignment"
