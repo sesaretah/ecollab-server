@@ -26,4 +26,17 @@ class Meeting < ApplicationRecord
   def is_admin(user_id)
     Attendance.where(attendable_id: self.id, attendable_type: "Meeting", user_id: user_id, duty: "moderator").any?
   end
+
+  def is_presenter(user_id)
+    Attendance.where("attendable_id = ? and attendable_type = ? and user_id = ? and duty in (?)", self.id, "Meeting", user_id, ["moderator", "presenter"]).any?
+  end
+
+  def user_duty(user_id)
+    attendance = Attendance.where("attendable_id = ? and attendable_type = ? and user_id = ?", self.id, "Meeting", user_id).last
+    if !attendance.blank?
+      return attendance.duty
+    else
+      return "listener"
+    end
+  end
 end

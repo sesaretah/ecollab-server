@@ -52,6 +52,8 @@ Rails.application.routes.draw do
     get "/events/tags", to: "events#tags"
     get "/events/meetings", to: "events#meetings"
 
+    get "/meetings/join_bigblue/:id", to: "meetings#join_bigblue"
+
     resources :profiles
     resources :channels
     resources :posts

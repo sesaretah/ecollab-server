@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_15_130419) do
+ActiveRecord::Schema.define(version: 2021_08_16_103244) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -243,6 +243,8 @@ ActiveRecord::Schema.define(version: 2021_08_15_130419) do
     t.string "vpin"
     t.string "vsecret"
     t.integer "exhibition_id"
+    t.string "attendee_password"
+    t.string "moderator_password"
     t.index ["exhibition_id"], name: "index_rooms_on_exhibition_id"
     t.index ["is_private"], name: "index_rooms_on_is_private"
     t.index ["meeting_id"], name: "index_rooms_on_meeting_id"

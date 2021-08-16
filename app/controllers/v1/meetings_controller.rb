@@ -11,6 +11,20 @@ class V1::MeetingsController < ApplicationController
     render json: { data: MeetingSerializer.new(@meeting, scope: { user_id: current_user.id }).as_json, klass: "Meeting" }, status: :ok
   end
 
+  def join_bigblue
+    @meeting = Meeting.find(params[:id])
+    room = @meeting.room
+    p room
+    p @meeting.is_presenter(current_user.id)
+    p !room.is_bigblue_running
+    room.create_bigblue if !room.is_bigblue_running #&& @meeting.is_presenter(current_user.id)
+    p room.is_bigblue_running
+    p @meeting.user_duty(current_user.id)
+    p current_user.profile.name
+    url = room.join_bigblue(@meeting.user_duty(current_user.id), current_user.profile.name.gsub(" ", "%20"))
+    render json: { data: { url: url }, klass: "MeetingUrl" }, status: :ok
+  end
+
   def index
     meetings = Meeting.all
     render json: { data: ActiveModel::SerializableResource.new(meetings, user_id: current_user.id, each_serializer: MeetingSerializer, scope: { user_id: current_user.id }).as_json, klass: "Meeting" }, status: :ok
