@@ -21,7 +21,7 @@ class V1::MeetingsController < ApplicationController
     p room.is_bigblue_running
     p @meeting.user_duty(current_user.id)
     p current_user.profile.name
-    url = room.join_bigblue(@meeting.user_duty(current_user.id), current_user.profile.name.gsub(" ", "%20"))
+    url = room.join_bigblue(@meeting.user_duty(current_user.id), URI::escape(current_user.profile.name))
     render json: { data: { url: url }, klass: "MeetingUrl" }, status: :ok
   end
 
