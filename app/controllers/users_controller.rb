@@ -5,11 +5,17 @@ class UsersController < ApplicationController
     Rails.logger.info result
     if !result["serviceResponse"]["authenticationSuccess"].blank?
       utid = result["serviceResponse"]["authenticationSuccess"]["user"]
+      
       user = User.find_by_email(utid + "@ut.ac.ir")
       if user.blank?
         password = SecureRandom.hex(6)
         user = User.create(email: utid + "@ut.ac.ir", password: password, password_confirmation: password, last_login: DateTime.now)
-        Profile.create(name: utid, user_id: user.id)
+        if !result["serviceResponse"]["authenticationSuccess"]["attributes"].blank?
+        name_array = result["serviceResponse"]["authenticationSuccess"]["attributes"]["givenName"]
+        surename_array = result["serviceResponse"]["authenticationSuccess"]["attributes"]["sn"]
+        name_array[0].scan(/[aeiou]/).count >= 1 ? name = name_array[1] : name = name_array[0]
+        surename_array[0].scan(/[aeiou]/).count >= 1 ? name = name + ' '+ surename_array[1] : name = name + ' ' + surename_array[0]
+        Profile.create(name: name, user_id: user.id)
       end
       redirect_to("https://event.ut.ac.ir/#/login_jwt/" + JWTWrapper.encode({ user_id: user.id }))
     else
