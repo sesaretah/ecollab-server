@@ -2,8 +2,12 @@ class V1::ExhibitionsController < ApplicationController
   # before_action :fix_date, only: [:create, :update]
 
   def search
-    exhibitions = Exhibition.search params[:q], star: true
-    render json: { items: ActiveModel::SerializableResource.new(exhibitions, each_serializer: ExhibitionSerializer).as_json }, status: :ok
+    with_hash = {}
+    with_hash["tag_ids"] = Tag.title_to_id(params[:tags].split(",")) if params[:tags] && params[:tags].length > 0
+    exhibitions = Exhibition.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => 6
+    all_matches = Exhibition.search params[:q], star: true, with: with_hash
+    pages = all_matches.length / 2
+    render json: { data: ActiveModel::SerializableResource.new(exhibitions, scope: { page: params[:page].to_i, pages: pages }, each_serializer: ExhibitionSerializer).as_json, klass: "Exhibition" }, status: :ok
   end
 
   def show
@@ -12,8 +16,8 @@ class V1::ExhibitionsController < ApplicationController
   end
 
   def index
-    exhibitions = Exhibition.all
-    render json: { data: ActiveModel::SerializableResource.new(exhibitions, user_id: current_user.id, each_serializer: ExhibitionSerializer, scope: { user_id: current_user.id }).as_json, klass: "Exhibition" }, status: :ok
+    exhibitions = Exhibition.paginate(page: params[:page], per_page: 6)
+    render json: { data: ActiveModel::SerializableResource.new(exhibitions, user_id: current_user.id, each_serializer: ExhibitionSerializer, scope: { user_id: current_user.id, page: params[:page].to_i }).as_json, klass: "Exhibition" }, status: :ok
   end
 
   def create

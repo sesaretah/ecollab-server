@@ -2,7 +2,7 @@ class ExhibitionSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
   include ActionView::Helpers::TextHelper
   attributes :id, :title, :info, :tags, :cover, :truncated_info,
-             :is_admin, :attendees, :room_id, :room_uuid
+             :is_admin, :attendees, :room_id, :room_uuid, :page, :pages
 
   belongs_to :event, serializer: EventSerializer
   has_many :flyers, serializer: FlyerSerializer
@@ -11,6 +11,18 @@ class ExhibitionSerializer < ActiveModel::Serializer
 
   def tags
     object.tags
+  end
+
+  def page
+    if scope && scope[:page]
+      scope[:page]
+    end
+  end
+
+  def pages
+    if scope && scope[:pages]
+      scope[:pages]
+    end
   end
 
   def truncated_info

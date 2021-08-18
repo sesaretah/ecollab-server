@@ -2,8 +2,13 @@ class V1::MeetingsController < ApplicationController
   # before_action :fix_date, only: [:create, :update]
 
   def search
-    meetings = Meeting.search params[:q], star: true
-    render json: { items: ActiveModel::SerializableResource.new(meetings, each_serializer: MeetingSerializer).as_json }, status: :ok
+    with_hash = {}
+    with_hash["tag_ids"] = Tag.title_to_id(params[:tags].split(",")) if params[:tags] && params[:tags].length > 0
+    with_hash["start_time"] = Time.at(params[:start_from].to_i / 1000).to_datetime..Time.at(params[:start_to].to_i / 1000).to_datetime if params[:start_from]
+    meetings = Meeting.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => 6
+    all_matches = Meeting.search params[:q], star: true, with: with_hash
+    pages = all_matches.length / 2
+    render json: { data: ActiveModel::SerializableResource.new(meetings, scope: { page: params[:page].to_i, pages: pages }, each_serializer: MeetingSerializer).as_json, klass: "Meeting" }, status: :ok
   end
 
   def show
@@ -14,20 +19,14 @@ class V1::MeetingsController < ApplicationController
   def join_bigblue
     @meeting = Meeting.find(params[:id])
     room = @meeting.room
-    p room
-    p @meeting.is_presenter(current_user.id)
-    p !room.is_bigblue_running
     room.create_bigblue if !room.is_bigblue_running #&& @meeting.is_presenter(current_user.id)
-    p room.is_bigblue_running
-    p @meeting.user_duty(current_user.id)
-    p current_user.profile.name
     url = room.join_bigblue(@meeting.user_duty(current_user.id), URI::escape(current_user.profile.name))
     render json: { data: { url: url }, klass: "MeetingUrl" }, status: :ok
   end
 
   def index
-    meetings = Meeting.all
-    render json: { data: ActiveModel::SerializableResource.new(meetings, user_id: current_user.id, each_serializer: MeetingSerializer, scope: { user_id: current_user.id }).as_json, klass: "Meeting" }, status: :ok
+    meetings = Meeting.where("start_time > ?", DateTime.current.beginning_of_day).paginate(page: params[:page], per_page: 2)
+    render json: { data: ActiveModel::SerializableResource.new(meetings, scope: { page: params[:page].to_i, user_id: current_user.id }, each_serializer: MeetingSerializer).as_json, klass: "Meeting" }, status: :ok
   end
 
   def create

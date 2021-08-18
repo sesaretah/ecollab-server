@@ -16,4 +16,13 @@ class Tag < ApplicationRecord
       .group(:id)
       .order("COUNT(taggings.id) DESC")
   end
+
+  def self.title_to_id(titles)
+    result = []
+    for title in titles
+      tag = self.where(title: title).first
+      result << tag.id if !tag.blank?
+    end
+    return result
+  end
 end
