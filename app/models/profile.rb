@@ -15,9 +15,9 @@ class Profile < ApplicationRecord
   def initials
     splited = self.name.split(" ")
     if splited.length > 1
-      return "#{splited[0][0].capitalize}#{splited[1][0].capitalize}"
+      return "#{splited[0][0].capitalize}‌#{splited[1][0].capitalize}"
     else
-      return "#{splited[0][0].capitalize}#{splited[0][1].capitalize}"
+      return "#{splited[0][0].capitalize}‌#{splited[0][1].capitalize}"
     end
   end
 

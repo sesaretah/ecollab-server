@@ -1,4 +1,5 @@
 class Event < ApplicationRecord
+  after_save ThinkingSphinx::RealTime.callback_for(:event)
   attr_accessor :crop_x, :crop_y, :crop_w, :crop_h
   has_many :attendances, as: :attendable, dependent: :destroy
   has_many :discussions, as: :discussable, dependent: :destroy
@@ -29,6 +30,12 @@ class Event < ApplicationRecord
       .where("taggable_id in (?) and taggable_type = ?", self.meetings.pluck(:id), "Meeting")
       .group(:id)
       .order("COUNT(taggings.id) DESC")
+  end
+
+  def self.owner(user_id)
+    Event
+      .left_joins(:attendances)
+      .where("attendable_type = ? and attendances.user_id = ? and duty = ?", "Event", user_id, "moderator")
   end
 
   def check_cropping
@@ -66,5 +73,9 @@ class Event < ApplicationRecord
         cover_image.variant(resize: size).processed
       end
     end
+  end
+
+  def is_attending(user_id)
+    Attendance.where("attendable_id = ? and attendable_type = ? and user_id = ?", self.id, "Event", user_id).any?
   end
 end

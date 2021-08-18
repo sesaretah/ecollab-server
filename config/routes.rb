@@ -48,6 +48,7 @@ Rails.application.routes.draw do
 
     get "/attendances/delete", to: "attendances#destroy"
     post "/attendances/change_duty", to: "attendances#change_duty"
+    post "/attendances/attend", to: "attendances#attend"
 
     get "/events/tags", to: "events#tags"
     get "/events/meetings", to: "events#meetings"
@@ -56,6 +57,9 @@ Rails.application.routes.draw do
 
     get "/meetings/search", to: "meetings#search"
     get "/events/search", to: "events#search"
+    get "/events/related", to: "events#related"
+    get "/events/owner", to: "events#owner"
+
     get "/exhibitions/search", to: "exhibitions#search"
 
     resources :profiles

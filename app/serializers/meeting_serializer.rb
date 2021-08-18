@@ -5,7 +5,7 @@ class MeetingSerializer < ActiveModel::Serializer
              :capacity, :meeting_type, :info,
              :external_link, :attendees, :tags, :is_private, :room_id,
              :start_day, :end_day, :cover, :truncated_info, :is_admin,
-             :room_uuid, :page, :pages
+             :room_uuid, :page, :pages, :attending
   belongs_to :event, serializer: EventSerializer
   has_many :flyers, serializer: FlyerSerializer
   has_many :uploads, serializer: UploadSerializer
@@ -65,6 +65,14 @@ class MeetingSerializer < ActiveModel::Serializer
 
   def is_admin
     if scope && scope[:user_id] && object.is_admin(scope[:user_id])
+      return true
+    else
+      return false
+    end
+  end
+
+  def attending
+    if scope && scope[:user_id] && object.is_attending(scope[:user_id])
       return true
     else
       return false

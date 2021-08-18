@@ -6,7 +6,7 @@ class V1::EventsController < ApplicationController
     events = Event.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => 6
     all_matches = Event.search params[:q], star: true, with: with_hash
     pages = all_matches.length / 2
-    render json: { data: ActiveModel::SerializableResource.new(events, scope: { page: params[:page].to_i, pages: pages }, each_serializer: EventSerializer).as_json, klass: "Event" }, status: :ok
+    render json: { data: ActiveModel::SerializableResource.new(events, scope: { page: params[:page].to_i, pages: pages, user_id: current_user.id }, each_serializer: EventIndexSerializer).as_json, klass: "Event" }, status: :ok
   end
 
   def tags
@@ -18,7 +18,7 @@ class V1::EventsController < ApplicationController
   def meetings
     @event = Event.find(params[:id])
     meetings = @event.meetings.joins(:taggings).where("start_time >= ? and end_time <= ? and taggings.tag_id in (?)", Time.at(params[:start_time].to_i / 1000), Time.at(params[:end_time].to_i / 1000), params[:tag_ids].split(","))
-    render json: { data: ActiveModel::SerializableResource.new(meetings, user_id: current_user.id, each_serializer: MeetingSerializer, scope: { user_id: current_user.id }).as_json, klass: "Meeting" }, status: :ok
+    render json: { data: ActiveModel::SerializableResource.new(meetings, user_id: current_user.id, each_serializer: MeetingIndexSerializer, scope: { user_id: current_user.id }).as_json, klass: "Meeting" }, status: :ok
   end
 
   def show
@@ -26,9 +26,19 @@ class V1::EventsController < ApplicationController
     render json: { data: EventSerializer.new(@event, scope: { user_id: current_user.id }).as_json, klass: "Event" }, status: :ok
   end
 
+  def related
+    events = Event.where("start_date > ?", DateTime.current.beginning_of_day)
+    render json: { data: ActiveModel::SerializableResource.new(events, user_id: current_user.id, each_serializer: EventIndexSerializer, scope: { user_id: current_user.id, page: params[:page].to_i }).as_json, klass: "Event" }, status: :ok
+  end
+
+  def owner
+    events = Event.owner(current_user.id)
+    render json: { data: ActiveModel::SerializableResource.new(events, user_id: current_user.id, each_serializer: EventIndexSerializer, scope: { user_id: current_user.id, page: params[:page].to_i }).as_json, klass: "Event" }, status: :ok
+  end
+
   def index
     events = Event.where("start_date > ?", DateTime.current.beginning_of_day).paginate(page: params[:page], per_page: 6)
-    render json: { data: ActiveModel::SerializableResource.new(events, user_id: current_user.id, each_serializer: EventSerializer, scope: { user_id: current_user.id, page: params[:page].to_i }).as_json, klass: "Event" }, status: :ok
+    render json: { data: ActiveModel::SerializableResource.new(events, user_id: current_user.id, each_serializer: EventIndexSerializer, scope: { user_id: current_user.id, page: params[:page].to_i }).as_json, klass: "Event" }, status: :ok
   end
 
   def create

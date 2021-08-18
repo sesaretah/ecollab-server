@@ -4,6 +4,19 @@ class V1::AttendancesController < ApplicationController
     render json: { items: ActiveModel::SerializableResource.new(attendances, each_serializer: AttendanceSerializer).as_json }, status: :ok
   end
 
+  def attend
+    attendance = Attendance.where("attendable_id = ?and attendable_type = ? and user_id = ?", params[:attendable_id], params[:attendable_type], current_user.id).first
+    attendable = attendance.attendable if !attendance.blank?
+    flag = ActiveModel::Type::Boolean.new.cast(params[:flag])
+    if flag
+      attendance = Attendance.create(attendable_id: params[:attendable_id], attendable_type: params[:attendable_type], user_id: current_user.id, duty: "listener") if attendance.blank?
+      attendable = attendance.attendable
+    else
+      attendance.destroy if attendance.attendable_owner
+    end
+    render json: { data: "#{attendable.class.name}Serializer".classify.constantize.new(attendable, scope: { user_id: current_user.id }).as_json, klass: "#{attendable.class.name}" }, status: :ok
+  end
+
   def change_duty
     @attendance = Attendance.find(params[:id])
     if @attendance.attendable_owner
@@ -25,7 +38,7 @@ class V1::AttendancesController < ApplicationController
   def create
     @attendance = Attendance.new(attendance_params)
     @attendance.user_id = params[:user_id]
-    @attendance.duty = "presenter"
+    @attendance.duty = "listener"
     if @attendance.save
       render json: { data: AttendanceSerializer.new(@attendance).as_json, klass: "Attendance" }, status: :ok
     end

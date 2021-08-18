@@ -5,4 +5,5 @@ ThinkingSphinx::Index.define :meeting, :with => :real_time do
   has tag_ids, :multi => true, :type => :integer
   has start_time, :type => :timestamp
   has end_time, :type => :timestamp
+  has event_id, :type => :integer
 end

@@ -1,4 +1,5 @@
 class Exhibition < ApplicationRecord
+  after_save ThinkingSphinx::RealTime.callback_for(:exhibition)
   has_many :flyers, as: :advertisable, dependent: :destroy
   has_many :uploads, as: :uploadable, dependent: :destroy
   has_many :taggings, as: :taggable, dependent: :destroy

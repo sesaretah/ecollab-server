@@ -1,4 +1,5 @@
 class Meeting < ApplicationRecord
+  after_save ThinkingSphinx::RealTime.callback_for(:meeting)
   after_create :setup_room
 
   has_many :attendances, as: :attendable, dependent: :destroy
@@ -38,5 +39,9 @@ class Meeting < ApplicationRecord
     else
       return "listener"
     end
+  end
+
+  def is_attending(user_id)
+    Attendance.where("attendable_id = ? and attendable_type = ? and user_id = ?", self.id, "Meeting", user_id).any?
   end
 end
