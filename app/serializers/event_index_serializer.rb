@@ -4,7 +4,7 @@ class EventIndexSerializer < ActiveModel::Serializer
   attributes :id, :title, :info, :event_type,
              :tags, :is_private,
              :cover, :start_date, :end_date, :truncated_info,
-             :is_admin, :page, :pages
+             :is_admin, :page, :pages, :attending
   #has_many :meetings, serializer: MeetingSerializer
   #has_many :flyers, serializer: FlyerSerializer
   #has_many :uploads, serializer: UploadSerializer

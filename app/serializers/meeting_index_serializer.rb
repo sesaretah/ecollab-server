@@ -5,7 +5,7 @@ class MeetingIndexSerializer < ActiveModel::Serializer
              :capacity, :meeting_type, :info,
              :external_link, :tags, :is_private, :room_id,
              :start_day, :end_day, :cover, :truncated_info, :is_admin,
-             :room_uuid, :page, :pages
+             :room_uuid, :page, :pages, :attending
   #belongs_to :event, serializer: EventSerializer
   #has_many :flyers, serializer: FlyerSerializer
   #has_many :uploads, serializer: UploadSerializer
