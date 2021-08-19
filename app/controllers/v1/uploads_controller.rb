@@ -37,8 +37,11 @@ class V1::UploadsController < ApplicationController
 
   def destroy
     @upload = Upload.find(params[:id])
-    if @upload.destroy
-      render json: { data: @upload, klass: "Upload" }, status: :ok
+    uploadable = @upload.uploadable
+    p uploadable
+    p uploadable.is_admin(current_user.id)
+    if uploadable.is_admin(current_user.id) && @upload.destroy
+      render json: { data: "#{uploadable.class.name}Serializer".classify.constantize.new(uploadable, scope: { user_id: current_user.id }).as_json, klass: "#{uploadable.class.name}" }, status: :ok
     else
       render json: { data: @upload.errors.full_messages }, status: :ok
     end

@@ -30,12 +30,12 @@ class EventIndexSerializer < ActiveModel::Serializer
   end
 
   def cover
-    upload = Upload.where("uploadable_type = ? and uploadable_id = ?", "Event", object.id).last
+    upload = Upload.where("uploadable_type = ? and uploadable_id = ? and upload_type = ?", "Event", object.id, "cover").last
     if !upload.blank? && upload.attached_document.attached? && !upload.crop_settings.blank?
       dimensions = "#{upload.crop_settings["width"]}x#{upload.crop_settings["height"]}"
       coord = "#{upload.crop_settings["x"]}+#{upload.crop_settings["y"]}"
       Rails.application.routes.default_url_options[:host] + rails_representation_url(upload.attached_document.variant(
-        crop: "#{dimensions}+#{coord}",
+        crop: "#{dimensions}+#{coord}", resize: "440x440",
       ).processed, only_path: true)
     end
   end

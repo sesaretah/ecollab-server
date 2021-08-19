@@ -5,7 +5,8 @@ class MeetingSerializer < ActiveModel::Serializer
              :capacity, :meeting_type, :info,
              :external_link, :attendees, :tags, :is_private, :room_id,
              :start_day, :end_day, :cover, :truncated_info, :is_admin,
-             :room_uuid, :page, :pages, :attending
+             :room_uuid, :page, :pages, :attending,
+             :internal, :bigblue
   belongs_to :event, serializer: EventSerializer
   has_many :flyers, serializer: FlyerSerializer
   has_many :uploads, serializer: UploadSerializer
@@ -53,7 +54,7 @@ class MeetingSerializer < ActiveModel::Serializer
   end
 
   def cover
-    upload = Upload.where("uploadable_type = ? and uploadable_id = ?", "Meeting", object.id).last
+    upload = Upload.where("uploadable_type = ? and uploadable_id = ? and upload_type = ?", "Meeting", object.id, "cover").last
     if !upload.blank? && upload.attached_document.attached? && !upload.crop_settings.blank?
       dimensions = "#{upload.crop_settings["width"]}x#{upload.crop_settings["height"]}"
       coord = "#{upload.crop_settings["x"]}+#{upload.crop_settings["y"]}"

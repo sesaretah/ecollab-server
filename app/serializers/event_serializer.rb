@@ -36,7 +36,7 @@ class EventSerializer < ActiveModel::Serializer
   end
 
   def cover
-    upload = Upload.where("uploadable_type = ? and uploadable_id = ?", "Event", object.id).last
+    upload = Upload.where("uploadable_type = ? and uploadable_id = ? and upload_type = ?", "Event", object.id, "cover").last
     if !upload.blank? && upload.attached_document.attached? && !upload.crop_settings.blank?
       dimensions = "#{upload.crop_settings["width"]}x#{upload.crop_settings["height"]}"
       coord = "#{upload.crop_settings["x"]}+#{upload.crop_settings["y"]}"

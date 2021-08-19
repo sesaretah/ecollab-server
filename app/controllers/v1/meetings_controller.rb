@@ -7,8 +7,7 @@ class V1::MeetingsController < ApplicationController
     with_hash["event_id"] = params[:event_id].to_i if params[:event_id] && params[:event_id].length > 0 && params[:event_id] != "0"
     with_hash["start_time"] = Time.at(params[:start_from].to_i / 1000).to_datetime..Time.at(params[:start_to].to_i / 1000).to_datetime if params[:start_from]
     meetings = Meeting.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => 6
-    all_matches = Meeting.search params[:q], star: true, with: with_hash
-    pages = all_matches.length / 2
+    pages = (all_matches.length / 6.to_f).ceil
     render json: { data: ActiveModel::SerializableResource.new(meetings, scope: { page: params[:page].to_i, pages: pages, user_id: current_user.id }, each_serializer: MeetingIndexSerializer).as_json, klass: "Meeting" }, status: :ok
   end
 
@@ -26,8 +25,9 @@ class V1::MeetingsController < ApplicationController
   end
 
   def index
-    meetings = Meeting.where("start_time > ?", DateTime.current.beginning_of_day).paginate(page: params[:page], per_page: 2)
-    render json: { data: ActiveModel::SerializableResource.new(meetings, scope: { page: params[:page].to_i, user_id: current_user.id }, each_serializer: MeetingIndexSerializer).as_json, klass: "Meeting" }, status: :ok
+    meetings = Meeting.where("start_time > ?", DateTime.current.beginning_of_day).paginate(page: params[:page], per_page: 6)
+    pages = (Meeting.where("start_time > ?", DateTime.current.beginning_of_day).count / 6.to_f).ceil
+    render json: { data: ActiveModel::SerializableResource.new(meetings, scope: { page: params[:page].to_i, pages: pages, user_id: current_user.id }, each_serializer: MeetingIndexSerializer).as_json, klass: "Meeting" }, status: :ok
   end
 
   def create

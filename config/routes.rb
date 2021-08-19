@@ -40,7 +40,9 @@ Rails.application.routes.draw do
     post "/users/change_role", to: "users#change_role"
 
     get "/download/:uuid", to: "uploads#download"
+    get "/uploads/delete", to: "uploads#destroy"
     get "/uploads/:uuid", to: "uploads#show"
+
     get "/uploads", to: "uploads#index"
 
     get "/tags/search", to: "tags#search"

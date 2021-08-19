@@ -5,7 +5,7 @@ class V1::EventsController < ApplicationController
     with_hash["start_date"] = Time.at(params[:start_from].to_i / 1000).to_datetime..Time.at(params[:start_to].to_i / 1000).to_datetime if params[:start_from]
     events = Event.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => 6
     all_matches = Event.search params[:q], star: true, with: with_hash
-    pages = all_matches.length / 2
+    pages = (all_matches.length / 6.to_f).ceil
     render json: { data: ActiveModel::SerializableResource.new(events, scope: { page: params[:page].to_i, pages: pages, user_id: current_user.id }, each_serializer: EventIndexSerializer).as_json, klass: "Event" }, status: :ok
   end
 
@@ -38,7 +38,8 @@ class V1::EventsController < ApplicationController
 
   def index
     events = Event.where("start_date > ?", DateTime.current.beginning_of_day).paginate(page: params[:page], per_page: 6)
-    render json: { data: ActiveModel::SerializableResource.new(events, user_id: current_user.id, each_serializer: EventIndexSerializer, scope: { user_id: current_user.id, page: params[:page].to_i }).as_json, klass: "Event" }, status: :ok
+    pages = (Event.where("start_date > ?", DateTime.current.beginning_of_day).count / 6.to_f).ceil
+    render json: { data: ActiveModel::SerializableResource.new(events, user_id: current_user.id, each_serializer: EventIndexSerializer, scope: { user_id: current_user.id, page: params[:page].to_i, pages: pages }).as_json, klass: "Event" }, status: :ok
   end
 
   def create
