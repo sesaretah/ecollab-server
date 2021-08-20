@@ -8,7 +8,7 @@ class UsersController < ApplicationController
       user = User.find_by_email(utid + "@ut.ac.ir")
       if user.blank?
         password = SecureRandom.hex(6)
-        user = User.create(email: utid + "@ut.ac.ir", password: password, password_confirmation: password, last_login: DateTime.now)
+        user = User.create(email: utid + "@ut.ac.ir", password: password, password_confirmation: password, last_login: DateTime.now, verified: true)
         if !result["serviceResponse"]["authenticationSuccess"]["attributes"].blank?
           name_array = result["serviceResponse"]["authenticationSuccess"]["attributes"]["givenName"]
           surename_array = result["serviceResponse"]["authenticationSuccess"]["attributes"]["sn"]

@@ -5,7 +5,9 @@ class V1::MeetingsController < ApplicationController
     with_hash = {}
     with_hash["tag_ids"] = Tag.title_to_id(params[:tags].split(",")) if params[:tags] && params[:tags].length > 0
     with_hash["event_id"] = params[:event_id].to_i if params[:event_id] && params[:event_id].length > 0 && params[:event_id] != "0"
-    with_hash["start_time"] = Time.at(params[:start_from].to_i / 1000).to_datetime..Time.at(params[:start_to].to_i / 1000).to_datetime if params[:start_from]
+    meeting_ids = Meeting.date_range(params[:start_from], params[:start_to])
+    with_hash["id_number"] = meeting_ids
+    #with_hash["start_time"] = Time.at(params[:start_from].to_i / 1000).to_datetime..Time.at(params[:start_to].to_i / 1000).to_datetime if params[:start_from]
     meetings = Meeting.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => 6
     all_matches = Meeting.search params[:q], star: true, with: with_hash
     pages = (all_matches.length / 6.to_f).ceil
@@ -21,13 +23,21 @@ class V1::MeetingsController < ApplicationController
     @meeting = Meeting.find(params[:id])
     room = @meeting.room
     room.create_bigblue if !room.is_bigblue_running #&& @meeting.is_presenter(current_user.id)
+    room.meeting_attendees_count >= @meeting.capacity ? full = true : full = false
+    DateTime.now >= @meeting.start_time && DateTime.now <= @meeting.end_time ? timely = true : timely = false
     url = room.join_bigblue(@meeting.user_duty(current_user.id), URI::escape(current_user.profile.name))
-    render json: { data: { url: url }, klass: "MeetingUrl" }, status: :ok
+    render json: { data: { url: url, full: full, timely: timely }, klass: "MeetingUrl" }, status: :ok
   end
 
   def index
-    meetings = Meeting.where("start_time > ?", DateTime.current.beginning_of_day).paginate(page: params[:page], per_page: 6)
-    pages = (Meeting.where("start_time > ?", DateTime.current.beginning_of_day).count / 6.to_f).ceil
+    today = DateTime.current.beginning_of_day
+    if (params[:event_id].blank?)
+      meetings = Meeting.where("(start_time <= ? and end_time >= ?) or start_time >= ?", today, today, today).paginate(page: params[:page], per_page: 6)
+      pages = (Meeting.where("(start_time <= ? and end_time >= ?) or start_time >= ?", today, today, today).count / 6.to_f).ceil
+    else
+      meetings = Meeting.where(event_id: params[:event_id]).paginate(page: params[:page], per_page: 6)
+      pages = (Meeting.where(event_id: params[:event_id]).count / 6.to_f).ceil
+    end
     render json: { data: ActiveModel::SerializableResource.new(meetings, scope: { page: params[:page].to_i, pages: pages, user_id: current_user.id }, each_serializer: MeetingIndexSerializer).as_json, klass: "Meeting" }, status: :ok
   end
 

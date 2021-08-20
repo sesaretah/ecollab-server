@@ -31,7 +31,7 @@ class V1::EventsController < ApplicationController
   end
 
   def related
-    events = Event.where("start_date > ?", DateTime.current.beginning_of_day)
+    events = Event.all
     render json: { data: ActiveModel::SerializableResource.new(events, user_id: current_user.id, each_serializer: EventIndexSerializer, scope: { user_id: current_user.id, page: params[:page].to_i }).as_json, klass: "Event" }, status: :ok
   end
 
@@ -41,8 +41,9 @@ class V1::EventsController < ApplicationController
   end
 
   def index
-    events = Event.where("start_date >= ?", DateTime.current.beginning_of_day).paginate(page: params[:page], per_page: 6)
-    pages = (Event.where("start_date >= ?", DateTime.current.beginning_of_day).count / 6.to_f).ceil
+    today = DateTime.current.beginning_of_day
+    events = Event.where("(start_date <= ? and end_date >= ?) or start_date >= ?", today, today, today).paginate(page: params[:page], per_page: 6)
+    pages = (Event.where("(start_date <= ? and end_date >= ?) or start_date >= ?", today, today, today).count / 6.to_f).ceil
     render json: { data: ActiveModel::SerializableResource.new(events, user_id: current_user.id, each_serializer: EventIndexSerializer, scope: { user_id: current_user.id, page: params[:page].to_i, pages: pages }).as_json, klass: "Event" }, status: :ok
   end
 

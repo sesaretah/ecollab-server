@@ -44,4 +44,10 @@ class Meeting < ApplicationRecord
   def is_attending(user_id)
     Attendance.where("attendable_id = ? and attendable_type = ? and user_id = ?", self.id, "Meeting", user_id).any?
   end
+
+  def self.date_range(s, e)
+    from = Time.at(s.to_i / 1000).to_datetime
+    to = Time.at(e.to_i / 1000).to_datetime
+    return self.where("(start_time between ? and ?) OR (end_time between ? and ?) OR (start_time <= ? and end_time >= ?)", from, to, from, to, from, to).pluck(:id)
+  end
 end

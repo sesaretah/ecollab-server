@@ -4,8 +4,8 @@ class EventSerializer < ActiveModel::Serializer
   attributes :id, :title, :info, :event_type,
              :attendees, :tags, :is_private,
              :cover, :start_date, :end_date, :truncated_info,
-             :is_admin, :page, :pages, :attending
-  has_many :meetings, serializer: MeetingSerializer
+             :is_admin, :page, :pages, :attending, :meetings
+  #has_many :meetings, serializer: MeetingIndexSerializer
   has_many :flyers, serializer: FlyerSerializer
   has_many :uploads, serializer: UploadSerializer
 
@@ -13,6 +13,12 @@ class EventSerializer < ActiveModel::Serializer
     user_ids = object.attendances.pluck(:user_id)
     profiles = Profile.where("user_id in (?)", user_ids)
     return ActiveModel::SerializableResource.new(profiles, each_serializer: ProfileSerializer).as_json
+  end
+
+  def meetings
+    today = DateTime.current.beginning_of_day
+    meetings = Meeting.where("(start_time <= ? and end_time >= ?) or start_time >= ?", today, today, today).order("start_time").limit(5)
+    return ActiveModel::SerializableResource.new(meetings, scope: { user_id: scope[:user_id] }, each_serializer: MeetingIndexSerializer).as_json
   end
 
   def page

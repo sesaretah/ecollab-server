@@ -45,12 +45,11 @@ class Room < ApplicationRecord
   end
 
   def create_bigblue
-    cheksum_string = "createmeetingID=" + self.uuid + Se
+    cheksum_string = "createmeetingID=" + self.uuid + "&record=true" + Se
     cheksum = Digest::SHA1.hexdigest cheksum_string
-    url = Domain + "create?meetingID=" + self.uuid + "&checksum=" + cheksum
+    url = Domain + "create?meetingID=" + self.uuid + "&record=true" + "&checksum=" + cheksum
     response = HTTParty.get(url)
     body = Hash.from_xml(response.body)
-    p body
     self.attendee_password = body["response"]["attendeePW"] if !body["response"]["attendeePW"].blank?
     self.moderator_password = body["response"]["moderatorPW"] if !body["response"]["moderatorPW"].blank?
     self.save
@@ -80,10 +79,18 @@ class Room < ApplicationRecord
     cheksum = Digest::SHA1.hexdigest cheksum_string
     url = Domain + "join?meetingID=" + self.uuid + "&password=" + password + "&fullName=" + name + "&checksum=" + cheksum
     return url
-    #response = HTTParty.get(url)
-    #p response
-    #body = Hash.from_xml(response.body)
-    #p body
-    #return body["response"]["url"]
+  end
+
+  def meeting_attendees_count
+    cheksum_string = "getMeetingInfomeetingID=" + self.uuid + Se
+    cheksum = Digest::SHA1.hexdigest cheksum_string
+    url = Domain + "getMeetingInfo?meetingID=" + self.uuid + "&checksum=" + cheksum
+    response = HTTParty.get(url)
+    body = Hash.from_xml(response.body)
+    if body["response"]["participantCount"]
+      return body["response"]["participantCount"].to_i
+    else
+      return 0
+    end
   end
 end

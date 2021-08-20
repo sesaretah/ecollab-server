@@ -7,7 +7,7 @@ class MeetingSerializer < ActiveModel::Serializer
              :start_day, :end_day, :cover, :truncated_info, :is_admin,
              :room_uuid, :page, :pages, :attending,
              :internal, :bigblue
-  belongs_to :event, serializer: EventSerializer
+  belongs_to :event, serializer: EventIndexSerializer
   has_many :flyers, serializer: FlyerSerializer
   has_many :uploads, serializer: UploadSerializer
 
