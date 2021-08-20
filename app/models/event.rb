@@ -78,4 +78,10 @@ class Event < ApplicationRecord
   def is_attending(user_id)
     Attendance.where("attendable_id = ? and attendable_type = ? and user_id = ?", self.id, "Event", user_id).any?
   end
+
+  def self.date_range(s, e)
+    from = Time.at(s.to_i / 1000).to_datetime.beginning_of_day
+    to = Time.at(e.to_i / 1000).to_datetime.beginning_of_day
+    return self.where("(start_date between ? and ?) OR (end_date between ? and ?) OR (start_date <= ? and end_date >= ?)", from, to, from, to, from, to).pluck(:id)
+  end
 end

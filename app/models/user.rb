@@ -92,4 +92,12 @@ class User < ApplicationRecord
   def self.verify(code)
     user = self.where("last_code = ? AND last_code_datetime > ?", code, 10.minutes.ago).first
   end
+
+  def verifiable(code)
+    if self.last_code == code && self.last_code_datetime > 15.minutes.ago
+      true
+    else
+      false
+    end
+  end
 end

@@ -11,9 +11,18 @@ class V1::UsersController < ApplicationController
 
   def login
     user = User.find_by_email(params["email"])
-    user.notify_user if user
+    user.notify_user if user && params["verification"].blank?
+    p params
     if !user.blank?
-      render :json => { data: { result: "OK", token: JWTWrapper.encode({ user_id: user.id }), user_id: user.id }, klass: "Login" }.to_json, :callback => params["callback"]
+      if user.verified
+        render :json => { data: { result: "OK", token: JWTWrapper.encode({ user_id: user.id }), user_id: user.id }, klass: "Login" }.to_json, :callback => params["callback"]
+      else
+        if !params["verification"].blank? && user.verifiable(params["verification"])
+          render :json => { data: { result: "OK", token: JWTWrapper.encode({ user_id: user.id }), user_id: user.id }, klass: "Login" }.to_json, :callback => params["callback"]
+        else
+          render :json => { data: { result: "VERIFY" }, klass: "VERIFY" }.to_json, :callback => params["callback"]
+        end
+      end
     else
       render :json => { result: "ERROR", reason: I18n.t(:doesnt_match) }.to_json, status: :unprocessable_entity
     end
