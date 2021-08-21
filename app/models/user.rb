@@ -92,9 +92,11 @@ class User < ApplicationRecord
 
   def verifiable(code)
     if self.last_code == code && self.last_code_datetime > 15.minutes.ago
-      true
+      self.verified = true
+      self.save
+      return true
     else
-      false
+      return false
     end
   end
 end
