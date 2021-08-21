@@ -9,8 +9,8 @@ class V1::MeetingsController < ApplicationController
     with_hash["id_number"] = meeting_ids
     #with_hash["start_time"] = Time.at(params[:start_from].to_i / 1000).to_datetime..Time.at(params[:start_to].to_i / 1000).to_datetime if params[:start_from]
     meetings = Meeting.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => 12, :order => "start_time ASC"
-    all_matches = Meeting.search params[:q], star: true, with: with_hash
-    pages = (all_matches.length / 12.to_f).ceil + 1
+    counter = Meeting.search_count params[:q], star: true, with: with_hash
+    pages = (counter / 12.to_f).ceil + 1
     render json: { data: ActiveModel::SerializableResource.new(meetings, scope: { page: params[:page].to_i, pages: pages, user_id: current_user.id }, each_serializer: MeetingIndexSerializer).as_json, klass: "Meeting" }, status: :ok
   end
 
