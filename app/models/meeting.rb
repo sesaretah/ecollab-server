@@ -52,6 +52,9 @@ class Meeting < ApplicationRecord
   end
 
   def self.date_range(s, e, status = "all", user_id = nil)
+    if status.blank?
+      status = "all"
+    end
     from = Time.at(s.to_i / 1000).to_datetime
     to = Time.at(e.to_i / 1000).to_datetime
     if status == "all"
