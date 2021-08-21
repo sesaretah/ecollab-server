@@ -49,6 +49,10 @@ Rails.application.routes.draw do
     get "/tags/top", to: "tags#top"
 
     get "/attendances/delete", to: "attendances#destroy"
+    get "/events/delete", to: "events#destroy"
+    get "/meetings/delete", to: "meetings#destroy"
+    get "/exhibitions/delete", to: "exhibitions#destroy"
+
     post "/attendances/change_duty", to: "attendances#change_duty"
     post "/attendances/attend", to: "attendances#attend"
 
@@ -56,6 +60,7 @@ Rails.application.routes.draw do
     get "/events/meetings", to: "events#meetings"
 
     get "/meetings/join_bigblue/:id", to: "meetings#join_bigblue"
+    get "/meetings/my", to: "meetings#my"
 
     get "/meetings/search", to: "meetings#search"
     get "/events/search", to: "events#search"
@@ -91,6 +96,7 @@ Rails.application.routes.draw do
     resources :questions
     resources :attendances
     resources :tags
+    resources :abilities
     resources :questions
 
     post "/users/assignments", to: "users#assignments"

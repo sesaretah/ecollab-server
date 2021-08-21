@@ -66,7 +66,7 @@ class V1::EventsController < ApplicationController
 
   def destroy
     @event = Event.find(params[:id])
-    if @event.destroy
+    if @event.is_admin(current_user.id) && @event.destroy
       render json: { data: @event, klass: "Event" }, status: :ok
     else
       render json: { data: @event.errors.full_messages }, status: :ok

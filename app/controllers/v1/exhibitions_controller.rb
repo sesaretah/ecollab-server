@@ -39,7 +39,7 @@ class V1::ExhibitionsController < ApplicationController
 
   def destroy
     @exhibition = Exhibition.find(params[:id])
-    if @exhibition.destroy
+    if @exhibition.is_admin(current_user.id) && @exhibition.destroy
       render json: { data: @exhibition, klass: "Exhibition" }, status: :ok
     else
       render json: { data: @exhibition.errors.full_messages }, status: :ok

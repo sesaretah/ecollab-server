@@ -1,6 +1,6 @@
 class Event < ApplicationRecord
   after_save ThinkingSphinx::RealTime.callback_for(:event)
-  attr_accessor :crop_x, :crop_y, :crop_w, :crop_h
+
   has_many :attendances, as: :attendable, dependent: :destroy
   has_many :discussions, as: :discussable, dependent: :destroy
   has_many :flyers, as: :advertisable, dependent: :destroy
@@ -12,8 +12,6 @@ class Event < ApplicationRecord
   has_many :meetings, dependent: :destroy
   has_many :exhibitions, dependent: :destroy
 
-  has_one_attached :cover_image
-  #before_save :check_cropping
   after_create :add_admin
 
   def add_admin
@@ -36,43 +34,6 @@ class Event < ApplicationRecord
     Event
       .left_joins(:attendances)
       .where("attendable_type = ? and attendances.user_id = ? and duty = ?", "Event", user_id, "moderator")
-  end
-
-  def check_cropping
-    self.crop_settings = { x: crop_x, y: crop_y, w: crop_w, h: crop_h } if cropping?
-  end
-
-  def cropping?
-    !crop_x.blank? && !crop_y.blank? && !crop_w.blank? && !crop_h.blank?
-  end
-
-  def cropped_image
-    if cover_image.attached?
-      if crop_settings.is_a? Hash
-        dimensions = "#{crop_settings["w"]}x#{crop_settings["h"]}"
-        coord = "#{crop_settings["x"]}+#{crop_settings["y"]}"
-        cover_image.variant(
-          crop: "#{dimensions}+#{coord}",
-        ).processed
-      else
-        cover_image
-      end
-    end
-  end
-
-  def thumbnail(size = "100x100")
-    if cover_image.attached?
-      if crop_settings.is_a? Hash
-        dimensions = "#{crop_settings["w"]}x#{crop_settings["h"]}"
-        coord = "#{crop_settings["x"]}+#{crop_settings["y"]}"
-        cover_image.variant(
-          crop: "#{dimensions}+#{coord}",
-          resize: size,
-        ).processed
-      else
-        cover_image.variant(resize: size).processed
-      end
-    end
   end
 
   def is_attending(user_id)

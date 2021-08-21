@@ -10,10 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_20_114312) do
+ActiveRecord::Schema.define(version: 2021_08_21_084315) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "abilities", force: :cascade do |t|
+    t.integer "user_id"
+    t.boolean "create_event"
+    t.boolean "create_exhibition"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "modify_ability"
+    t.boolean "administration"
+    t.index ["user_id"], name: "index_abilities_on_user_id"
+  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false

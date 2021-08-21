@@ -45,9 +45,30 @@ class Meeting < ApplicationRecord
     Attendance.where("attendable_id = ? and attendable_type = ? and user_id = ?", self.id, "Meeting", user_id).any?
   end
 
-  def self.date_range(s, e)
+  def self.user_meetings(user_id)
+    self
+      .joins(:attendances)
+      .where("attendable_type = ? and attendances.user_id = ?", "Meeting", user_id)
+  end
+
+  def self.date_range(s, e, status = "all", user_id = nil)
     from = Time.at(s.to_i / 1000).to_datetime
     to = Time.at(e.to_i / 1000).to_datetime
-    return self.where("(start_time between ? and ?) OR (end_time between ? and ?) OR (start_time <= ? and end_time >= ?)", from, to, from, to, from, to).pluck(:id)
+    if status == "all"
+      meetings = self.where("(start_time between ? and ?) OR (end_time between ? and ?) OR (start_time <= ? and end_time >= ?)", from, to, from, to, from, to).pluck(:id)
+    end
+    if status == "registered"
+      meetings = self
+        .joins(:attendances)
+        .where("(attendable_type = ? and attendances.user_id = ?) and ((start_time between ? and ?) OR (end_time between ? and ?) OR (start_time <= ? and end_time >= ?))", "Meeting", user_id, from, to, from, to, from, to).pluck(:id)
+    end
+    if status == "not_registered"
+      all = self.where("(start_time between ? and ?) OR (end_time between ? and ?) OR (start_time <= ? and end_time >= ?)", from, to, from, to, from, to).pluck(:id)
+      registered = self
+        .joins(:attendances)
+        .where("(attendable_type = ? and attendances.user_id = ?) and ((start_time between ? and ?) OR (end_time between ? and ?) OR (start_time <= ? and end_time >= ?))", "Meeting", user_id, from, to, from, to, from, to).pluck(:id)
+      meetings = all - registered
+    end
+    return meetings
   end
 end

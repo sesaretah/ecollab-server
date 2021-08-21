@@ -4,12 +4,19 @@ class ProfileSerializer < ActiveModel::Serializer
 
   attributes :id, :name, :surename, :fullname, :bio,
              :avatar, :last_login, :editable, :country, :initials, :tags,
-             :user_id, :short_bio, :tags
+             :user_id, :short_bio, :tags, :abilities
 
   belongs_to :user
 
   def tags
     object.user.tags
+  end
+
+  def abilities
+    ability = object.user.ability
+    if !ability.blank?
+      return ability
+    end
   end
 
   def short_bio
