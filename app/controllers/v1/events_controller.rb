@@ -52,7 +52,7 @@ class V1::EventsController < ApplicationController
     @event.user_id = current_user.id
     if @event.save
       Tagging.extract_tags(params[:tags], "Event", @event.id)
-      render json: { data: EventSerializer.new(@event).as_json, klass: "Event" }, status: :ok
+      render json: { data: EventSerializer.new(@event, scope: { user_id: current_user.id }).as_json, klass: "Event" }, status: :ok
     end
   end
 
@@ -60,7 +60,7 @@ class V1::EventsController < ApplicationController
     @event = Event.find(params[:id])
     Tagging.extract_tags(params[:tags], "Event", @event.id)
     if @event.update_attributes(event_params)
-      render json: { data: EventSerializer.new(@event).as_json, klass: "Event" }, status: :ok
+      render json: { data: EventSerializer.new(@event, scope: { user_id: current_user.id }).as_json, klass: "Event" }, status: :ok
     end
   end
 
