@@ -91,14 +91,25 @@ Rails.application.configure do
   config.active_job.queue_name_delimiter = "_"
 
   config.action_mailer.delivery_method = :smtp
+  #config.action_mailer.smtp_settings = {
+  #  address: "mail.ut.ac.ir",
+  #  port: 587,
+  #  domain: "mail.ut.ac.ir",
+  #  user_name: "snadmin",
+  #  password: "30Tue2017",
+  #  authentication: "plain",
+  #  enable_starttls_auto: true,
+  #}
   config.action_mailer.smtp_settings = {
-    address: "mail.ut.ac.ir",
-    port: 587,
-    domain: "mail.ut.ac.ir",
-    user_name: "snadmin",
-    password: "30Tue2017",
+    address: "mail.e-event.ir",
+    port: 465,
+    domain: "mail.e-event.ir",
+    user_name: "no-reply@e-event.ir",
+    password: "NrplyEvent#1400",
     authentication: "plain",
     enable_starttls_auto: true,
+    tls: true,
+    openssl_verify_mode: "none",
   }
   config.action_mailer.perform_deliveries = true
 end

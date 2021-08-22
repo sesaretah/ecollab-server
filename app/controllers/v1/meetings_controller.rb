@@ -36,7 +36,7 @@ class V1::MeetingsController < ApplicationController
 
   def index
     today = DateTime.current.beginning_of_day
-    if (params[:event_id].blank?)
+    if params[:event_id].blank?
       meetings = Meeting.where("(start_time <= ? and end_time >= ?) or start_time >= ?", today, today, today).order("start_time").paginate(page: params[:page], per_page: 12)
       pages = (Meeting.where("(start_time <= ? and end_time >= ?) or start_time >= ?", today, today, today).count / 12.to_f).ceil
     else

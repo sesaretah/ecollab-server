@@ -18,7 +18,13 @@ class V1::AttendancesController < ApplicationController
   end
 
   def change_duty
-    @attendance = Attendance.find(params[:id])
+    @attendance = Attendance.find(params[:id]) if !params[:id].blank?
+    if !params[:uuid].blank?
+      user = User.where(uuid: params[:uuid]).first
+      room = Room.find_by_id(params[:room_id])
+      meeting = room.meeting if !room.blank?
+      @attendance = Attendance.where(user_id: user.id, attendable_type: "Meeting", attendable_id: meeting.id).first if !user.blank? && !meeting.blank?
+    end
     if @attendance.attendable_owner
       @attendance.duty = params[:duty]
       @attendance.save

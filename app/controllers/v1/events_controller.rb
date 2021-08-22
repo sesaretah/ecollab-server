@@ -7,9 +7,9 @@ class V1::EventsController < ApplicationController
     #  end_day = Time.at(params[:start_to].to_i / 1000).to_datetime.beginning_of_day
     #   with_hash["start_date"] = start_day..end_day
     with_hash["id_number"] = event_ids
-    events = Event.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => 6
-    all_matches = Event.search params[:q], star: true, with: with_hash
-    pages = (all_matches.length / 6.to_f).ceil
+    events = Event.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => 6, :order => "start_date ASC"
+    counter = Event.search_count params[:q], star: true, with: with_hash
+    pages = (counter / 6.to_f).ceil
     render json: { data: ActiveModel::SerializableResource.new(events, scope: { page: params[:page].to_i, pages: pages, user_id: current_user.id }, each_serializer: EventIndexSerializer).as_json, klass: "Event" }, status: :ok
   end
 
