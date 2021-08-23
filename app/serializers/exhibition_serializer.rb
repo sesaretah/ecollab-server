@@ -4,7 +4,7 @@ class ExhibitionSerializer < ActiveModel::Serializer
   attributes :id, :title, :info, :tags, :cover, :truncated_info,
              :is_admin, :attendees, :room_id, :room_uuid, :page, :pages
 
-  belongs_to :event, serializer: EventSerializer
+  belongs_to :event, serializer: EventIndexSerializer
   has_many :flyers, serializer: FlyerSerializer
   has_many :uploads, serializer: UploadSerializer
   has_many :questions, serializer: QuestionSerializer
