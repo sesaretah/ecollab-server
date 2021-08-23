@@ -26,4 +26,14 @@ class Exhibition < ApplicationRecord
   def is_admin(user_id)
     Attendance.where(attendable_id: self.id, attendable_type: "Exhibition", user_id: user_id, duty: "moderator").any?
   end
+
+  def self.attending(user_id)
+    e1 = Meeting.joins(:attendances).where("attendable_type = ? and attendances.user_id = ?", "Meeting", User.first.id).pluck(:event_id).uniq
+    e2 = Event.joins(:attendances).where("attendable_type = ? and attendances.user_id = ?", "Event", User.first.id).pluck(:id).uniq
+    self.where("event_id in (?)", (e1 + e2).uniq)
+  end
+
+  def self.attending_ids(user_id)
+    self.attending(user_id).pluck(:id)
+  end
 end

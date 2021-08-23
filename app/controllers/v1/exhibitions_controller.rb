@@ -4,15 +4,24 @@ class V1::ExhibitionsController < ApplicationController
   def search
     with_hash = {}
     with_hash["tag_ids"] = Tag.title_to_id(params[:tags].split(",")) if params[:tags] && params[:tags].length > 0
-    exhibitions = Exhibition.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => 6
-    all_matches = Exhibition.search params[:q], star: true, with: with_hash
-    pages = all_matches.length / 2
+    exhibition_ids = Exhibition.attending_ids(current_user.id)
+    with_hash["id_number"] = exhibition_ids
+    exhibitions = Exhibition.search params[:q], star: true, with: with_hash, :order => :id, :page => params[:page], :per_page => 2
+    counter = Exhibition.search_count params[:q], star: true, with: with_hash
+    pages = (counter / 2.to_f).ceil
+
     render json: { data: ActiveModel::SerializableResource.new(exhibitions, scope: { page: params[:page].to_i, pages: pages }, each_serializer: ExhibitionSerializer).as_json, klass: "Exhibition" }, status: :ok
   end
 
   def show
     @exhibition = Exhibition.find(params[:id])
     render json: { data: ExhibitionSerializer.new(@exhibition, scope: { user_id: current_user.id }).as_json, klass: "Exhibition" }, status: :ok
+  end
+
+  def related
+    exhibitions = Exhibition.attending(current_user.id).paginate(page: params[:page], per_page: 2)
+    pages = (Exhibition.attending(current_user.id).count / 2.to_f).ceil
+    render json: { data: ActiveModel::SerializableResource.new(exhibitions, user_id: current_user.id, each_serializer: ExhibitionSerializer, scope: { user_id: current_user.id, page: params[:page].to_i, pages: pages }).as_json, klass: "Exhibition" }, status: :ok
   end
 
   def index
@@ -25,7 +34,7 @@ class V1::ExhibitionsController < ApplicationController
     @exhibition.user_id = current_user.id
     if @exhibition.save
       Tagging.extract_tags(params[:tags], "Exhibition", @exhibition.id)
-      render json: { data: ExhibitionSerializer.new(@exhibition).as_json, klass: "Exhibition" }, status: :ok
+      render json: { data: ExhibitionSerializer.new(@exhibition, scope: { user_id: current_user.id }).as_json, klass: "Exhibition" }, status: :ok
     end
   end
 
@@ -33,7 +42,7 @@ class V1::ExhibitionsController < ApplicationController
     @exhibition = Exhibition.find(params[:id])
     if @exhibition.update_attributes(exhibition_params)
       Tagging.extract_tags(params[:tags], "Exhibition", @exhibition.id)
-      render json: { data: ExhibitionSerializer.new(@exhibition).as_json, klass: "Exhibition" }, status: :ok
+      render json: { data: ExhibitionSerializer.new(@exhibition, scope: { user_id: current_user.id }).as_json, klass: "Exhibition" }, status: :ok
     end
   end
 

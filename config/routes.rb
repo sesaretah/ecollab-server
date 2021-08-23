@@ -53,6 +53,8 @@ Rails.application.routes.draw do
     get "/meetings/delete", to: "meetings#destroy"
     get "/exhibitions/delete", to: "exhibitions#destroy"
 
+    get "/exhibitions/related", to: "exhibitions#related"
+
     post "/attendances/change_duty", to: "attendances#change_duty"
     post "/attendances/attend", to: "attendances#attend"
 
