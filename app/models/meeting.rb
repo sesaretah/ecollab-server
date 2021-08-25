@@ -6,9 +6,12 @@ class Meeting < ApplicationRecord
   has_many :discussions, as: :discussable, dependent: :destroy
   has_many :flyers, as: :advertisable, dependent: :destroy
   has_many :uploads, as: :uploadable, dependent: :destroy
+  has_many :polls, as: :pollable, dependent: :destroy
 
   has_many :taggings, as: :taggable, dependent: :destroy
   has_many :tags, through: :taggings
+
+  has_many :polls, as: :pollable, dependent: :destroy
 
   has_one :room, dependent: :destroy
 

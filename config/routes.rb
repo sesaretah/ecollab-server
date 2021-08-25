@@ -69,6 +69,8 @@ Rails.application.routes.draw do
     get "/events/related", to: "events#related"
     get "/events/owner", to: "events#owner"
 
+    get "/polls/overview/:id", to: "polls#overview"
+
     get "/exhibitions/search", to: "exhibitions#search"
 
     resources :profiles
@@ -98,6 +100,8 @@ Rails.application.routes.draw do
     resources :questions
     resources :attendances
     resources :tags
+    resources :polls
+    resources :pollings
     resources :abilities
     resources :questions
 

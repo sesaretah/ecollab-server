@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_21_084315) do
+ActiveRecord::Schema.define(version: 2021_08_25_154855) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -202,6 +202,30 @@ ActiveRecord::Schema.define(version: 2021_08_21_084315) do
     t.json "target_user_hash"
     t.index ["notifiable_id"], name: "index_notifications_on_notifiable_id"
     t.index ["notifiable_type"], name: "index_notifications_on_notifiable_type"
+  end
+
+  create_table "pollings", force: :cascade do |t|
+    t.integer "poll_id"
+    t.integer "user_id"
+    t.integer "outcome"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.json "outcomes"
+    t.index ["poll_id"], name: "index_pollings_on_poll_id"
+    t.index ["user_id"], name: "index_pollings_on_user_id"
+  end
+
+  create_table "polls", force: :cascade do |t|
+    t.integer "pollable_id"
+    t.string "pollable_type"
+    t.string "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "answer_type"
+    t.json "answer_content"
+    t.integer "user_id"
+    t.index ["pollable_id"], name: "index_polls_on_pollable_id"
+    t.index ["pollable_type"], name: "index_polls_on_pollable_type"
   end
 
   create_table "profiles", force: :cascade do |t|
