@@ -11,7 +11,6 @@ class Event < ApplicationRecord
 
   has_many :meetings, dependent: :destroy
   has_many :exhibitions, dependent: :destroy
-
   after_create :add_admin
 
   def add_admin
