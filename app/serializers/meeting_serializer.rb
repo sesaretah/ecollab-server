@@ -6,7 +6,8 @@ class MeetingSerializer < ActiveModel::Serializer
              :external_link, :attendees, :tags, :is_private, :room_id,
              :start_day, :end_day, :cover, :truncated_info, :is_admin,
              :room_uuid, :page, :pages, :attending,
-             :internal, :bigblue, :sata
+             :internal, :bigblue, :sata, :is_presenter,
+             :is_moderator, :is_speaker
   belongs_to :event, serializer: EventIndexSerializer
   has_many :flyers, serializer: FlyerSerializer
   has_many :uploads, serializer: UploadSerializer
@@ -69,6 +70,24 @@ class MeetingSerializer < ActiveModel::Serializer
       return true
     else
       return false
+    end
+  end
+
+  def is_presenter
+    if scope && scope[:user_id]
+      object.attendances.where(duty: "presenter", user_id: scope[:user_id]).any?
+    end
+  end
+
+  def is_moderator
+    if scope && scope[:user_id]
+      object.attendances.where(duty: "moderator", user_id: scope[:user_id]).any?
+    end
+  end
+
+  def is_speaker
+    if scope && scope[:user_id]
+      object.attendances.where(duty: "speaker", user_id: scope[:user_id]).any?
     end
   end
 
