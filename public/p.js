@@ -567,7 +567,7 @@ console.log(id, display, audio, video);
       }
       remoteFeed.videoCodec = video;
 	  roomId = display.split("§")[5]
-	  if(getUrlVars()["display"] === roomId[0]) {
+	  if(parseInt(roomId[0]) % 12 === parseInt(getUrlVars()["display"]) ) {
 		remoteFeed.send({ message: subscribe });
 	  }
       
