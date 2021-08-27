@@ -6,7 +6,7 @@ class MeetingSerializer < ActiveModel::Serializer
              :external_link, :attendees, :tags, :is_private, :room_id,
              :start_day, :end_day, :cover, :truncated_info, :is_admin,
              :room_uuid, :page, :pages, :attending,
-             :internal, :bigblue
+             :internal, :bigblue, :sata
   belongs_to :event, serializer: EventIndexSerializer
   has_many :flyers, serializer: FlyerSerializer
   has_many :uploads, serializer: UploadSerializer

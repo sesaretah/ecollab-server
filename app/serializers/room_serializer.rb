@@ -1,12 +1,17 @@
 class RoomSerializer < ActiveModel::Serializer
   attributes :id, :title, :is_private, :uuid, :pin, :user_uuid, :user_fullname,
-             :is_owner, :is_admin, :vuuid, :vpin, :secret, :is_presenter, :is_moderator, :is_speaker
+             :is_owner, :is_admin, :vuuid, :vpin, :secret, :is_presenter,
+             :is_moderator, :is_speaker, :is_sata
 
   def user_uuid
     if scope && scope[:user_id]
       user = User.find_by_id(scope[:user_id])
       user.uuid if !user.blank?
     end
+  end
+
+  def is_sata
+    object.meeting.sata
   end
 
   def user_fullname
