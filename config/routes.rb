@@ -73,6 +73,8 @@ Rails.application.routes.draw do
 
     get "/exhibitions/search", to: "exhibitions#search"
 
+    get "/polls/delete", to: "polls#destroy"
+
     resources :profiles
     resources :channels
     resources :posts

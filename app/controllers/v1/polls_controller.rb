@@ -36,10 +36,8 @@ class V1::PollsController < ApplicationController
 
   def destroy
     @poll = Poll.find(params[:id])
-    @advertisable = @poll.advertisable_type.classify.constantize.find_by_id(@poll.advertisable_id)
     if @poll.destroy
-      render json: { data: "#{@advertisable.class.name}Serializer".classify.safe_constantize.new(@advertisable).as_json, klass: "#{@advertisable.class.name}" }, status: :ok
-      # render json: { data: @poll, klass: "Poll" }, status: :ok
+      render json: { data: "OK", klass: "Poll" }, status: :ok
     else
       render json: { data: @poll.errors.full_messages }, status: :ok
     end

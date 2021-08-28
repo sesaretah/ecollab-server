@@ -1,6 +1,6 @@
 class Poll < ApplicationRecord
   belongs_to :pollable, polymorphic: true
-  has_many :pollings
+  has_many :pollings, dependent: :destroy
 
   before_save :extract_answer_content
 
