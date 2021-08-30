@@ -11,7 +11,7 @@ class RoomSerializer < ActiveModel::Serializer
   end
 
   def is_sata
-    object.meeting.sata
+    object.meeting.sata if object.meeting
   end
 
   def user_fullname

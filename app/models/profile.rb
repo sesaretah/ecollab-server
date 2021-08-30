@@ -1,8 +1,11 @@
 class Profile < ApplicationRecord
   include Rails.application.routes.url_helpers
+  require 'unicode_fixer'
+
   after_save ThinkingSphinx::RealTime.callback_for(:profile)
   belongs_to :user
   has_one_attached :avatar
+  before_save :fix_unicode
 
   def nickname
     "#{self.name} #{self.surename}"
@@ -10,6 +13,13 @@ class Profile < ApplicationRecord
 
   def tags
     return Tag.titler(self.user.tags)
+  end
+
+  def fix_unicode
+    fixed_name = UnicodeFixer.fix(self.name)
+    self.name = fixed_name
+    fixed_surename = UnicodeFixer.fix(self.surename)
+    self.surename = fixed_surename
   end
 
   def initials

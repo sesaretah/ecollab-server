@@ -66,7 +66,7 @@ class V1::AttendancesController < ApplicationController
   def prepare_list(attendable_id, attendable_type, q)
     attendances = Attendance.where(attendable_id: attendable_id, attendable_type: attendable_type)
     if q.blank? || q.length < 3
-      profiles = Profile.all
+      profiles = Profile.last(20)
     else
       profiles = Profile.search q, star: true
     end
