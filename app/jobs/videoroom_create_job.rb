@@ -1,6 +1,7 @@
 class VideoroomCreateJob < ApplicationJob
   queue_as :default
   URL = "https://sync.ut.ac.ir:8089/janus"
+  #URL = "https://kaarafarinan.ir:8089/janus"
 
   def perform(room_id)
     room = Room.find_by_id(room_id)

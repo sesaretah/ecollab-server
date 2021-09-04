@@ -1,11 +1,8 @@
 class V1::EventsController < ApplicationController
   def search
     with_hash = {}
-    event_ids = Event.date_range(params[:start_from], params[:start_to])
+    event_ids = Event.date_range(params[:start_from], params[:start_to], current_user.id)
     with_hash["tag_ids"] = Tag.title_to_id(params[:tags].split(",")) if params[:tags] && params[:tags].length > 0
-    #   start_day = Time.at(params[:start_from].to_i / 1000).to_datetime.beginning_of_day
-    #  end_day = Time.at(params[:start_to].to_i / 1000).to_datetime.beginning_of_day
-    #   with_hash["start_date"] = start_day..end_day
     with_hash["id_number"] = event_ids
     events = Event.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => 6, :order => "start_date ASC"
     counter = Event.search_count params[:q], star: true, with: with_hash

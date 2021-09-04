@@ -61,7 +61,11 @@ class Meeting < ApplicationRecord
     from = Time.at(s.to_i / 1000).to_datetime
     to = Time.at(e.to_i / 1000).to_datetime
     if status == "all"
-      meetings = self.where("(start_time between ? and ?) OR (end_time between ? and ?) OR (start_time <= ? and end_time >= ?)", from, to, from, to, from, to).pluck(:id)
+      publics = self.where("(is_private is false) and ((start_time between ? and ?) OR (end_time between ? and ?) OR (start_time <= ? and end_time >= ?))", from, to, from, to, from, to).pluck(:id)
+      registered = self
+        .joins(:attendances)
+        .where("(attendable_type = ? and attendances.user_id = ?) and ((start_time between ? and ?) OR (end_time between ? and ?) OR (start_time <= ? and end_time >= ?))", "Meeting", user_id, from, to, from, to, from, to).pluck(:id)
+      meetings = (publics + registered).uniq
     end
     if status == "registered"
       meetings = self
@@ -69,11 +73,11 @@ class Meeting < ApplicationRecord
         .where("(attendable_type = ? and attendances.user_id = ?) and ((start_time between ? and ?) OR (end_time between ? and ?) OR (start_time <= ? and end_time >= ?))", "Meeting", user_id, from, to, from, to, from, to).pluck(:id)
     end
     if status == "not_registered"
-      all = self.where("(start_time between ? and ?) OR (end_time between ? and ?) OR (start_time <= ? and end_time >= ?)", from, to, from, to, from, to).pluck(:id)
+      publics = self.where("(is_private is false) and ((start_time between ? and ?) OR (end_time between ? and ?) OR (start_time <= ? and end_time >= ?))", from, to, from, to, from, to).pluck(:id)
       registered = self
         .joins(:attendances)
         .where("(attendable_type = ? and attendances.user_id = ?) and ((start_time between ? and ?) OR (end_time between ? and ?) OR (start_time <= ? and end_time >= ?))", "Meeting", user_id, from, to, from, to, from, to).pluck(:id)
-      meetings = all - registered
+      meetings = publics - registered
     end
     return meetings
   end

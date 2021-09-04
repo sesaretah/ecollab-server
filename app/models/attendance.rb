@@ -12,7 +12,7 @@ class Attendance < ApplicationRecord
   end
 
   def profile
-    self.user.profile
+    self.user.profile if !self.user.blank? && !self.user.profile.blank?
   end
 
   def attendable_owner

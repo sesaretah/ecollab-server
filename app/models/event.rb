@@ -39,9 +39,12 @@ class Event < ApplicationRecord
     Attendance.where("attendable_id = ? and attendable_type = ? and user_id = ?", self.id, "Event", user_id).any?
   end
 
-  def self.date_range(s, e)
+  def self.date_range(s, e, user_id)
     from = Time.at(s.to_i / 1000).to_datetime.beginning_of_day
     to = Time.at(e.to_i / 1000).to_datetime.beginning_of_day
-    return self.where("(start_date between ? and ?) OR (end_date between ? and ?) OR (start_date <= ? and end_date >= ?)", from, to, from, to, from, to).pluck(:id)
+    all_ids = self.where("(start_date between ? and ?) OR (end_date between ? and ?) OR (start_date <= ? and end_date >= ?)", from, to, from, to, from, to).pluck(:id)
+    private_ids = self.where("id in (?) and is_private is true", all_ids).pluck(:id)
+    event_ids = Attendance.where("attendable_id in (?) and attendable_type = ? and user_id = ?", private_ids, "Event", user_id).pluck(:attendable_id)
+    return all_ids - private_ids + event_ids
   end
 end

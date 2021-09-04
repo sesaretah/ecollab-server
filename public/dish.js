@@ -15,7 +15,7 @@ function dishArea(Increment, Count, Width, Height, Margin = 10) {
     else return Increment;
 }
 // Dish:
-function disher(el,dish='Dish', cam = 'Camera') {
+function disher(el, dish='Dish', cam = 'Camera') {
     console.log('Disher called', dish, cam)
     // variables:
         let Margin = 2;

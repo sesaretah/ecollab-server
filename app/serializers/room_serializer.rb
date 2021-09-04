@@ -1,6 +1,6 @@
 class RoomSerializer < ActiveModel::Serializer
   attributes :id, :title, :is_private, :uuid, :pin, :user_uuid, :user_fullname,
-             :is_owner, :is_admin, :vuuid, :vpin, :secret, :is_presenter,
+             :is_owner, :is_admin, :vuuid, :vpin, :secret, :vsecret, :is_presenter,
              :is_moderator, :is_speaker, :is_sata
 
   def user_uuid
