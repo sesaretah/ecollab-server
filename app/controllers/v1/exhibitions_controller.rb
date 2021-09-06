@@ -4,6 +4,9 @@ class V1::ExhibitionsController < ApplicationController
   def search
     with_hash = {}
     with_hash["tag_ids"] = Tag.title_to_id(params[:tags].split(",")) if params[:tags] && params[:tags].length > 0
+    event = Event.where(shortname: params[:event_name]).first if params[:event_name] != ""
+    with_hash["event_id"] = event.id if !event.blank?
+    with_hash["event_id"] = params[:event_id].to_i if params[:event_id] && params[:event_id].length > 0 && params[:event_id] != "0"
     exhibition_ids = Exhibition.attending_ids(current_user.id)
     with_hash["id_number"] = exhibition_ids
     exhibitions = Exhibition.search params[:q], star: true, with: with_hash, :order => :id, :page => params[:page], :per_page => 12
