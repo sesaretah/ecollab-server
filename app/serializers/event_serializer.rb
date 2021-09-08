@@ -2,17 +2,21 @@ class EventSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
   include ActionView::Helpers::TextHelper
   attributes :id, :title, :info, :event_type,
-             :attendees, :tags, :is_private,
+             :attendees, :tags, :is_private, :shortname,
              :cover, :start_date, :end_date, :truncated_info,
-             :is_admin, :page, :pages, :attending, :meetings
+             :is_admin, :page, :pages, :attending, :meetings, :attendees_count
   #has_many :meetings, serializer: MeetingIndexSerializer
   has_many :flyers, serializer: FlyerSerializer
   has_many :uploads, serializer: UploadSerializer
 
   def attendees
-    user_ids = object.attendances.pluck(:user_id)
+    user_ids = object.attendances.limit(10).pluck(:user_id)
     profiles = Profile.where("user_id in (?)", user_ids)
     return ActiveModel::SerializableResource.new(profiles, each_serializer: ProfileSerializer).as_json
+  end
+
+  def attendees_count
+    object.attendances.count
   end
 
   def meetings

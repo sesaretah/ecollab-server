@@ -2,7 +2,7 @@ class EventIndexSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
   include ActionView::Helpers::TextHelper
   attributes :id, :title, :info, :event_type,
-             :tags, :is_private,
+             :tags, :is_private, :shortname,
              :cover, :start_date, :end_date, :truncated_info,
              :is_admin, :page, :pages, :attending
   #has_many :meetings, serializer: MeetingSerializer

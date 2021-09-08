@@ -7,15 +7,19 @@ class MeetingSerializer < ActiveModel::Serializer
              :start_day, :end_day, :cover, :truncated_info, :is_admin,
              :room_uuid, :page, :pages, :attending,
              :internal, :bigblue, :sata, :is_presenter,
-             :is_moderator, :is_speaker
+             :is_moderator, :is_speaker, :attendees_count
   belongs_to :event, serializer: EventIndexSerializer
   has_many :flyers, serializer: FlyerSerializer
   has_many :uploads, serializer: UploadSerializer
 
   def attendees
-    user_ids = object.attendances.pluck(:user_id)
+    user_ids = object.attendances.limit(10).pluck(:user_id)
     profiles = Profile.where("user_id in (?)", user_ids)
     return ActiveModel::SerializableResource.new(profiles, each_serializer: ProfileSerializer).as_json
+  end
+
+  def attendees_count
+    object.attendances.count
   end
 
   def page

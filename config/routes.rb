@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   devise_scope :user do
     get "/users/service", to: "users#service"
   end
+  get ":slug" => "home#index"
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   api_version(:module => "V1", :path => { :value => "v1" }) do
     get "/actuals/delete", to: "actuals#delete"
@@ -68,6 +69,7 @@ Rails.application.routes.draw do
     get "/events/search", to: "events#search"
     get "/events/related", to: "events#related"
     get "/events/owner", to: "events#owner"
+    get "/events/shortname_list", to: "events#shortname_list"
 
     get "/polls/overview/:id", to: "polls#overview"
 
