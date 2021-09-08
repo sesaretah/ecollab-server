@@ -10,6 +10,11 @@ class V1::EventsController < ApplicationController
     render json: { data: ActiveModel::SerializableResource.new(events, scope: { page: params[:page].to_i, pages: pages, user_id: current_user.id }, each_serializer: EventIndexSerializer).as_json, klass: "Event" }, status: :ok
   end
 
+  def search_shortname
+    events = Event.where(shortname: params[:shortname])
+    render json: { data: ActiveModel::SerializableResource.new(events, each_serializer: EventIndexSerializer).as_json, klass: "Event" }, status: :ok
+  end
+
   def shortname_list
     events = Event.where(shortname: params[:shortname])
     render json: { data: ActiveModel::SerializableResource.new(events, each_serializer: EventIndexSerializer).as_json, klass: "Event" }, status: :ok

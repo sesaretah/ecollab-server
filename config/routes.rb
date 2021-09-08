@@ -70,6 +70,7 @@ Rails.application.routes.draw do
     get "/events/related", to: "events#related"
     get "/events/owner", to: "events#owner"
     get "/events/shortname_list", to: "events#shortname_list"
+    get "/events/search_shortname", to: "events#search_shortname"
 
     get "/polls/overview/:id", to: "polls#overview"
 
