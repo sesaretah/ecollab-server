@@ -22,6 +22,9 @@ class EventSerializer < ActiveModel::Serializer
   def meetings
     today = DateTime.current.beginning_of_day
     meetings = object.meetings.where("(start_time <= ? and end_time >= ?) or start_time >= ?", today, today, today).order("start_time").limit(5)
+    if meetings.blank?
+      meetings = object.meetings.order("start_time desc").limit(5)
+    end
     return ActiveModel::SerializableResource.new(meetings, scope: { user_id: scope[:user_id] }, each_serializer: MeetingIndexSerializer).as_json
   end
 
