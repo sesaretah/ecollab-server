@@ -4,8 +4,8 @@ class V1::MeetingsController < ApplicationController
   def search
     with_hash = {}
     with_hash["tag_ids"] = Tag.title_to_id(params[:tags].split(",")) if params[:tags] && params[:tags].length > 0
-    event = Event.where(shortname: params[:event_name]).first if params[:event_name] != ""
-    with_hash["event_id"] = event.id if !event.blank?
+    #event = Event.where(shortname: params[:event_name]).first if params[:event_name] != ""
+    #with_hash["event_id"] = event.id if !event.blank?
     with_hash["event_id"] = params[:event_id].to_i if params[:event_id] && params[:event_id].length > 0 && params[:event_id] != "0" && params[:event_id] != "null"
     meeting_ids = Meeting.date_range(params[:start_from], params[:start_to], params[:registration_status], current_user.id)
     with_hash["id_number"] = meeting_ids
