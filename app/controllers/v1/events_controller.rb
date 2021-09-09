@@ -38,7 +38,7 @@ class V1::EventsController < ApplicationController
   end
 
   def related
-    events = Event.related
+    events = Event.related(current_user.id)
     render json: { data: ActiveModel::SerializableResource.new(events, user_id: current_user.id, each_serializer: EventIndexSerializer, scope: { user_id: current_user.id, page: params[:page].to_i }).as_json, klass: "Event" }, status: :ok
   end
 
