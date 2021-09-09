@@ -23,8 +23,10 @@ class V1::ProfilesController < ApplicationController
   end
 
   def search
-    profiles = Profile.search params[:q], star: true
-    render json: { data: ActiveModel::SerializableResource.new(profiles, each_serializer: ProfileSerializer).as_json, klass: "Profile" }, status: :ok
+    profiles = Profile.search params[:q], star: true, :page => params[:page], :per_page => 12
+    counter = Profile.search_count params[:q], star: true
+    pages = (counter / 12.to_f).ceil
+    render json: { data: ActiveModel::SerializableResource.new(profiles, scope: { page: params[:page].to_i, pages: pages, user_id: current_user.id }, each_serializer: ProfileSerializer).as_json, klass: "Profile" }, status: :ok
   end
 
   def show

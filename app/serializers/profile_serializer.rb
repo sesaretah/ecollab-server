@@ -4,9 +4,21 @@ class ProfileSerializer < ActiveModel::Serializer
 
   attributes :id, :name, :surename, :fullname, :bio,
              :avatar, :last_login, :editable, :country, :initials, :tags,
-             :user_id, :short_bio, :tags, :abilities
+             :user_id, :short_bio, :tags, :abilities, :page, :pages
 
   belongs_to :user
+
+  def page
+    if scope && scope[:page]
+      scope[:page]
+    end
+  end
+
+  def pages
+    if scope && scope[:pages]
+      scope[:pages]
+    end
+  end
 
   def tags
     object.user.tags

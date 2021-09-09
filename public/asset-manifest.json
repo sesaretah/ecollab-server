@@ -1,35 +1,36 @@
 {
   "files": {
     "main.css": "/static/css/main.ea4b7c9d.chunk.css",
-    "main.js": "/static/js/main.65d82412.chunk.js",
-    "main.js.map": "/static/js/main.65d82412.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.19b5fa13.js",
-    "runtime-main.js.map": "/static/js/runtime-main.19b5fa13.js.map",
+    "main.js": "/static/js/main.5dd7547d.chunk.js",
+    "main.js.map": "/static/js/main.5dd7547d.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.0153be91.js",
+    "runtime-main.js.map": "/static/js/runtime-main.0153be91.js.map",
     "static/css/2.d669ce7b.chunk.css": "/static/css/2.d669ce7b.chunk.css",
     "static/js/2.dc3e82e8.chunk.js": "/static/js/2.dc3e82e8.chunk.js",
     "static/js/2.dc3e82e8.chunk.js.map": "/static/js/2.dc3e82e8.chunk.js.map",
-    "static/css/3.da75ad3d.chunk.css": "/static/css/3.da75ad3d.chunk.css",
+    "static/css/3.2e7653b6.chunk.css": "/static/css/3.2e7653b6.chunk.css",
     "static/js/3.e506e693.chunk.js": "/static/js/3.e506e693.chunk.js",
     "static/js/3.e506e693.chunk.js.map": "/static/js/3.e506e693.chunk.js.map",
-    "static/css/4.98c39780.chunk.css": "/static/css/4.98c39780.chunk.css",
+    "static/css/4.7fb731dc.chunk.css": "/static/css/4.7fb731dc.chunk.css",
     "static/js/4.a0bbb08e.chunk.js": "/static/js/4.a0bbb08e.chunk.js",
     "static/js/4.a0bbb08e.chunk.js.map": "/static/js/4.a0bbb08e.chunk.js.map",
     "static/js/5.c84421aa.chunk.js": "/static/js/5.c84421aa.chunk.js",
     "static/js/5.c84421aa.chunk.js.map": "/static/js/5.c84421aa.chunk.js.map",
     "index.html": "/index.html",
     "static/css/2.d669ce7b.chunk.css.map": "/static/css/2.d669ce7b.chunk.css.map",
-    "static/css/3.da75ad3d.chunk.css.map": "/static/css/3.da75ad3d.chunk.css.map",
-    "static/css/4.98c39780.chunk.css.map": "/static/css/4.98c39780.chunk.css.map",
+    "static/css/3.2e7653b6.chunk.css.map": "/static/css/3.2e7653b6.chunk.css.map",
+    "static/css/4.7fb731dc.chunk.css.map": "/static/css/4.7fb731dc.chunk.css.map",
     "static/css/main.ea4b7c9d.chunk.css.map": "/static/css/main.ea4b7c9d.chunk.css.map",
     "static/js/2.dc3e82e8.chunk.js.LICENSE.txt": "/static/js/2.dc3e82e8.chunk.js.LICENSE.txt",
     "static/media/app.rtl.css": "/static/media/IRANSansWeb.bbf8f452.ttf",
-    "static/media/logo.6ce24c58.svg": "/static/media/logo.6ce24c58.svg"
+    "static/media/logo.6ce24c58.svg": "/static/media/logo.6ce24c58.svg",
+    "static/media/app.css": "/static/media/pattern.1b098f6c.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.19b5fa13.js",
+    "static/js/runtime-main.0153be91.js",
     "static/css/2.d669ce7b.chunk.css",
     "static/js/2.dc3e82e8.chunk.js",
     "static/css/main.ea4b7c9d.chunk.css",
-    "static/js/main.65d82412.chunk.js"
+    "static/js/main.5dd7547d.chunk.js"
   ]
 }
