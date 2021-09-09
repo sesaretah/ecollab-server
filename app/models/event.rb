@@ -42,7 +42,7 @@ class Event < ApplicationRecord
   def self.related(user_id)
     Event
       .left_joins(:attendances)
-      .where("attendable_type = ? and attendances.user_id = ? and duty = ?", "Event", user_id)
+      .where("attendable_type = ? and attendances.user_id = ?", "Event", user_id)
   end
 
   def self.date_range(s, e, user_id)
