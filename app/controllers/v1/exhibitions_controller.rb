@@ -1,11 +1,9 @@
 class V1::ExhibitionsController < ApplicationController
-  # before_action :fix_date, only: [:create, :update]
-
   def search
     with_hash = {}
+    user = User.find_by_id(current_user.id)
+    with_hash["activated"] = true if user.blank? || user.ability.blank? || !user.ability.administration
     with_hash["tag_ids"] = Tag.title_to_id(params[:tags].split(",")) if params[:tags] && params[:tags].length > 0
-    #event = Event.where(shortname: params[:event_name]).first if params[:event_name] != ""
-    #with_hash["event_id"] = event.id if !event.blank?
     with_hash["event_id"] = params[:event_id].to_i if params[:event_id] && params[:event_id].length > 0 && params[:event_id] != "0" && params[:event_id] != "null"
     if params[:event_id] && params[:event_id].length > 0 && params[:event_id] != "0" && params[:event_id] != "null"
       exhibition_ids = Exhibition.attending_ids(current_user.id)
@@ -15,7 +13,7 @@ class V1::ExhibitionsController < ApplicationController
     counter = Exhibition.search_count params[:q], star: true, with: with_hash
     pages = (counter / 12.to_f).ceil
 
-    render json: { data: ActiveModel::SerializableResource.new(exhibitions, scope: { page: params[:page].to_i, pages: pages }, each_serializer: ExhibitionSerializer).as_json, klass: "Exhibition" }, status: :ok
+    render json: { data: ActiveModel::SerializableResource.new(exhibitions, scope: { page: params[:page].to_i, pages: pages }, each_serializer: ExhibitionIndexSerializer).as_json, klass: "Exhibition" }, status: :ok
   end
 
   def show
@@ -31,7 +29,7 @@ class V1::ExhibitionsController < ApplicationController
 
   def index
     exhibitions = Exhibition.paginate(page: params[:page], per_page: 6)
-    render json: { data: ActiveModel::SerializableResource.new(exhibitions, user_id: current_user.id, each_serializer: ExhibitionSerializer, scope: { user_id: current_user.id, page: params[:page].to_i }).as_json, klass: "Exhibition" }, status: :ok
+    render json: { data: ActiveModel::SerializableResource.new(exhibitions, user_id: current_user.id, each_serializer: ExhibitionIndexSerializer, scope: { user_id: current_user.id, page: params[:page].to_i }).as_json, klass: "Exhibition" }, status: :ok
   end
 
   def create

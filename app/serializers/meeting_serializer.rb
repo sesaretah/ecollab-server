@@ -70,6 +70,13 @@ class MeetingSerializer < ActiveModel::Serializer
   end
 
   def is_admin
+    if scope && scope[:user_id]
+      user = User.find_by_id(scope[:user_id])
+      if !user.blank? && !user.ability.blank? && user.ability.administration
+        return true
+      end
+    end
+
     if scope && scope[:user_id] && object.is_admin(scope[:user_id])
       return true
     else
@@ -85,6 +92,13 @@ class MeetingSerializer < ActiveModel::Serializer
 
   def is_moderator
     if scope && scope[:user_id]
+      user = User.find_by_id(scope[:user_id])
+      if !user.blank? && !user.ability.blank? && user.ability.administration
+        return true
+      end
+    end
+
+    if scope && scope[:user_id]
       object.attendances.where(duty: "moderator", user_id: scope[:user_id]).any?
     end
   end
@@ -96,6 +110,13 @@ class MeetingSerializer < ActiveModel::Serializer
   end
 
   def attending
+    if scope && scope[:user_id]
+      user = User.find_by_id(scope[:user_id])
+      if !user.blank? && !user.ability.blank? && user.ability.administration
+        return true
+      end
+    end
+
     if scope && scope[:user_id] && object.is_attending(scope[:user_id])
       return true
     else

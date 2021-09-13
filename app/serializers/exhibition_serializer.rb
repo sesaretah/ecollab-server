@@ -2,7 +2,8 @@ class ExhibitionSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
   include ActionView::Helpers::TextHelper
   attributes :id, :title, :info, :tags, :cover, :truncated_info,
-             :is_admin, :attendees, :room_id, :room_uuid, :page, :pages
+             :is_admin, :attendees, :room_id, :room_uuid, :page, :pages,
+             :is_active
 
   belongs_to :event, serializer: EventIndexSerializer
   has_many :flyers, serializer: FlyerSerializer
@@ -55,6 +56,13 @@ class ExhibitionSerializer < ActiveModel::Serializer
   end
 
   def is_admin
+    if scope && scope[:user_id]
+      user = User.find_by_id(scope[:user_id])
+      if !user.blank? && !user.ability.blank? && user.ability.administration
+        return true
+      end
+    end
+
     if scope && scope[:user_id] && object.is_admin(scope[:user_id])
       return true
     else
