@@ -3,6 +3,7 @@ class ProfileSerializer < ActiveModel::Serializer
   include ActionView::Helpers::TextHelper
 
   attributes :id, :name, :surename, :fullname, :bio,
+             :twitter, :instagram, :telegram, :phone, :linkdin, :email,
              :avatar, :last_login, :editable, :country, :initials, :tags,
              :user_id, :short_bio, :tags, :abilities, :page, :pages, :cover
 
