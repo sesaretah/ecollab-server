@@ -31,15 +31,20 @@ class V1::ProfilesController < ApplicationController
 
   def show
     @profile = Profile.find(params[:id])
-    render json: { data: ProfileSerializer.new(@profile, scope: { user_id: current_user.id }).as_json, klass: "Profile" }, status: :ok
+    render json: { data: ProfileDetailSerializer.new(@profile, scope: { user_id: current_user.id }).as_json, klass: "Profile" }, status: :ok
+  end
+
+  def mine
+    profiles = Profile.where(user_id: current_user.id)
+    render json: { data: ActiveModel::SerializableResource.new(profiles, each_serializer: ProfileSerializer).as_json, klass: "MyProfile" }, status: :ok
   end
 
   def my
     @profile = current_user.profile
     if @profile
-      render json: { data: ProfileSerializer.new(@profile).as_json, klass: "Profile" }, status: :ok
+      render json: { data: ProfileDetailSerializer.new(@profile, scope: { user_id: current_user.id }).as_json, klass: "MyProfile" }, status: :ok
     else
-      render json: { data: "No profile", klass: "Profile" }, status: :ok
+      render json: { data: "No profile", klass: "MyProfile" }, status: :ok
     end
   end
 

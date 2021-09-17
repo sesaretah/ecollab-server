@@ -4,7 +4,7 @@ class ProfileSerializer < ActiveModel::Serializer
 
   attributes :id, :name, :surename, :fullname, :bio,
              :avatar, :last_login, :editable, :country, :initials, :tags,
-             :user_id, :short_bio, :tags, :abilities, :page, :pages
+             :user_id, :short_bio, :tags, :abilities, :page, :pages, :cover
 
   belongs_to :user
 
@@ -61,5 +61,16 @@ class ProfileSerializer < ActiveModel::Serializer
 
   def avatar
     object.profile_avatar
+  end
+
+  def cover
+    upload = Upload.where("uploadable_type = ? and uploadable_id = ? and upload_type = ?", "Profile", object.id, "avatar").last
+    if !upload.blank? && upload.attached_document.attached? && !upload.crop_settings.blank?
+      dimensions = "#{upload.crop_settings["width"]}x#{upload.crop_settings["height"]}"
+      coord = "#{upload.crop_settings["x"]}+#{upload.crop_settings["y"]}"
+      Rails.application.routes.default_url_options[:host] + rails_representation_url(upload.attached_document.variant(
+        crop: "#{dimensions}+#{coord}",
+      ).processed, only_path: true)
+    end
   end
 end

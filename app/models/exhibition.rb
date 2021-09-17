@@ -33,6 +33,12 @@ class Exhibition < ApplicationRecord
     self.where("event_id in (?)", (e1 + e2).uniq)
   end
 
+  def self.user_recent_exhibitions(user_id)
+    self
+      .joins(:attendances)
+      .where("attendable_type = ? and attendances.user_id = ?", "Exhibition", user_id).order("attendances.created_at desc").limit(10)
+  end
+
   def self.attending_ids(user_id)
     self.attending(user_id).pluck(:id)
   end

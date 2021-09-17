@@ -54,6 +54,12 @@ class Meeting < ApplicationRecord
       .where("attendable_type = ? and attendances.user_id = ?", "Meeting", user_id)
   end
 
+  def self.user_recent_meetings(user_id)
+    self
+      .joins(:attendances)
+      .where("attendable_type = ? and attendances.user_id = ?", "Meeting", user_id).order("attendances.created_at desc").limit(10)
+  end
+
   def self.date_range(s, e, status = "all", user_id = nil)
     if status.blank?
       status = "all"

@@ -8,11 +8,11 @@ Rails.application.routes.draw do
   api_version(:module => "V1", :path => { :value => "v1" }) do
     get "/actuals/delete", to: "actuals#delete"
     get "/profiles/search", to: "profiles#search"
-    put "/profiles", to: "profiles#update"
-    get "/profiles/my", to: "profiles#my"
-    get "/profiles/my/:id", to: "profiles#my"
-    post "/profiles/add_experties/:id", to: "profiles#add_experties"
-    post "/profiles/remove_experties/:id", to: "profiles#remove_experties"
+    #put "/profiles", to: "profiles#update"
+    get "/profiles/mine", to: "profiles#mine"
+    #get "/profiles/my/:id", to: "profiles#my"
+    #post "/profiles/add_experties/:id", to: "profiles#add_experties"
+    #post "/profiles/remove_experties/:id", to: "profiles#remove_experties"
 
     get "/posts/search", to: "posts#search"
     get "/posts/delete", to: "posts#destroy"

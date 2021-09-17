@@ -45,6 +45,12 @@ class Event < ApplicationRecord
       .where("attendable_type = ? and attendances.user_id = ?", "Event", user_id)
   end
 
+  def self.user_recent_events(user_id)
+    self
+      .joins(:attendances)
+      .where("attendable_type = ? and attendances.user_id = ?", "Event", user_id).order("attendances.created_at").limit(10)
+  end
+
   def self.date_range(s, e, user_id)
     from = Time.at(s.to_i / 1000).to_datetime.beginning_of_day
     to = Time.at(e.to_i / 1000).to_datetime.beginning_of_day
