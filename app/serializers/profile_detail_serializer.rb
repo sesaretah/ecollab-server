@@ -11,7 +11,7 @@ class ProfileDetailSerializer < ActiveModel::Serializer
   belongs_to :user
 
   def is_owner
-    if scope[:user_id].to_i == object.user.id
+    if scope && scope[:user_id] && scope[:user_id].to_i == object.user.id
       return true
     else
       return false

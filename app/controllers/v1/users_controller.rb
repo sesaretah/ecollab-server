@@ -9,6 +9,13 @@ class V1::UsersController < ApplicationController
   #  end
   #end
 
+  def user_info
+    user = User.find_by_uuid(params["uuid"])
+    if !user.blank? && !user.profile.blank?
+      render json: { data: ProfileSerializer.new(user.profile).as_json, klass: "Profile" }, status: :ok
+    end
+  end
+
   def login
     user = User.find_by_email(params["email"])
     user.notify_user if user && params["verification"].blank? && !user.verified

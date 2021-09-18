@@ -38,6 +38,7 @@ Rails.application.routes.draw do
     post "/notification_settings/remove", to: "notification_settings#remove"
 
     get "/users/role", to: "users#role"
+    get "/users/user_info/:uuid", to: "users#user_info"
     post "/users/change_role", to: "users#change_role"
 
     get "/download/:uuid", to: "uploads#download"

@@ -142,7 +142,7 @@ $(document).ready(function () {
             onmessage: function (msg, jsep) {
               Janus.debug(" ::: Got a message (publisher) :::", msg);
               var event = msg["videoroom"];
-              Janus.debug("Event: " + event);
+              console.log("Event: " , msg);
               if (event) {
                 if (event === "joined") {
                   // Publisher/manager created, negotiate WebRTC and attach to existing feeds, if any
@@ -159,6 +159,13 @@ $(document).ready(function () {
                     $("#videos").removeClass("hide").show();
                   } else {
                     //publishOwnFeed(true);
+                  }
+
+                  if (msg["attendees"]) {
+                    var list = msg["attendees"];
+                    for (var f in list) {
+                    cardMaker(list[f]["display"])
+                    }
                   }
                   // Any new feed to attach to?
                   if (msg["publishers"]) {
@@ -193,6 +200,18 @@ $(document).ready(function () {
                     window.location.reload();
                   });
                 } else if (event === "event") {
+
+                  if(msg['joining']){
+                   /* console.log('joining', msg['joining']['display'])
+                    if(msg['joining']['display']) {
+                      var uuid = msg['joining']['display'].split("§")[1]
+                      $.get( "/v1/users/user_info/"+uuid, function( res ) {
+                        console.log(res.data)
+                        $( "#Dish" ).append("<div class='Camera d-flex flex-column justify-content-center align-items-center' data-content='"+msg['joining']['display'].split("§")[0]+"'><div class=''><div class='card'><img src='"+ res.data.cover+"'</div></div></div>");
+                      });
+                    }*/
+                    cardMaker(msg['joining']['display'])
+                  }
                   // Any new feed to attach to?
                   if (msg["publishers"]) {
                     var list = msg["publishers"];
@@ -810,6 +829,17 @@ function vstreamAttacher(feed, display) {
 
 
 
+function cardMaker(display){
+  if(display) {
+    var uuid = display.split("§")[1]
+    $.get( "/v1/users/user_info/"+uuid, function( res ) {
+      console.log(res.data)
+      $( "#Dish" ).append("<div class='Camera d-flex flex-column justify-content-center align-items-center' data-content='"+display.split("§")[0]+"' style='background-color: #444;'><div class='card' style='height: 100%; background: rgba(0,0,0,0.6);'><img  style='height: 100%' src='"+ res.data.cover+"'</div></div></div>");
+      disher("", "Dish", "Camera");
+    });
+  }
+  
+}
 
 
 function streamAttacher(feed, display = "") {
