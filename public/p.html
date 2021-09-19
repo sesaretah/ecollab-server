@@ -9,8 +9,8 @@
     />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="bootstrap.min.css" >
-    <link rel="stylesheet" href="dish.css" >
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <link rel="stylesheet" href="dish.css" />
 
     <style>
       #remotes video {
@@ -30,16 +30,16 @@
 
     <title>SATA</title>
     <script src="jquery-3.6.0.min.js"></script>
-    <script
-      src="popper.min.js"></script>
+    <script src="popper.min.js"></script>
     <script src="bootstrap.min.js"></script>
 
-    <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js"></script>
     <script src="socket.io.min.js"></script>
     <script src="adapter.js"></script>
     <script src="janus.js"></script>
-   
+
     <script>
+      var uuids = []
       function getUrlVars() {
         var vars = [],
           hash;
@@ -55,36 +55,46 @@
       }
       console.log(getUrlVars()["display"]);
     </script>
-    
+
     <script src="p.js"></script>
     <script src="dish.js"></script>
     <script>
-      $( document ).ready(function() {
-   disher();
-});
- $(window).on('resize',disher);
-</script>
+      $(document).ready(function () {
+        disher();
+      });
+      $(window).on("resize", disher);
+
+      $.get(
+        "/v1/rooms/profile_display?display=" +
+          getUrlVars()["display"] +
+          "&id=" +
+          getUrlVars()["room_id"],
+        function (res) {
+          var list = res.data;
+          for (var u in list) {
+            $("#Dish").append(
+              "<div id='container-" +
+                list[u].uuid +
+                "'><div id='pr-"+list[u].uuid +"'> <div id='pri-"+list[u].uuid+"'class='Camera d-flex flex-column justify-content-center align-items-center' data-content='" +
+                list[u].fullname +
+                "' style='background-color: #444;'><div class='card' style='height: 100%; background: rgba(0,0,0,0.6);'><img id='img-"+list[u].uuid+"' style='height: 100%; opacity:0.15' src='" +
+                list[u].cover +
+                "'</div></div></div></div></div>"
+            );
+            uuids.push(list[u].uuid)
+            disher("", "Dish", "Camera");
+          }
+        }
+      );
+    </script>
   </head>
 
   <body>
-
     <div class="container-fluid">
-
-
-          <div id='Dish'>
-          </div>
-      </div>
-
+      <div id="Dish"></div>
+    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-
-
-
-
-
-
-
-    
   </body>
 </html>

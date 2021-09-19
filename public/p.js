@@ -63,6 +63,7 @@ var mypvtid = null;
 
 var feeds = [];
 var bitrateTimer = [];
+var joined = {}
 
 var doSimulcast =
   getQueryStringValue("simulcast") === "yes" ||
@@ -164,7 +165,9 @@ $(document).ready(function () {
                   if (msg["attendees"]) {
                     var list = msg["attendees"];
                     for (var f in list) {
+                      var uuid = list[f]["display"].split("§")[1]
                     cardMaker(list[f]["display"])
+                    joined[list[f]["id"]] = uuid
                     }
                   }
                   // Any new feed to attach to?
@@ -210,7 +213,10 @@ $(document).ready(function () {
                         $( "#Dish" ).append("<div class='Camera d-flex flex-column justify-content-center align-items-center' data-content='"+msg['joining']['display'].split("§")[0]+"'><div class=''><div class='card'><img src='"+ res.data.cover+"'</div></div></div>");
                       });
                     }*/
+                    var uuid = msg['joining']['display'].split("§")[1]
+                    var id = msg['joining']['id']
                     cardMaker(msg['joining']['display'])
+                    joined[id] = uuid
                   }
                   // Any new feed to attach to?
                   if (msg["publishers"]) {
@@ -240,6 +246,7 @@ $(document).ready(function () {
                   } else if (msg["leaving"]) {
                     // One of the publishers has gone away?
                     var leaving = msg["leaving"];
+                    $('#img-'+joined[leaving]).css('opacity', '0.15')
                     Janus.log("Publisher left: " + leaving);
                     var remoteFeed = null;
                     for (var i = 1; i < 6; i++) {
@@ -586,9 +593,13 @@ console.log(id, display, audio, video);
       }
       remoteFeed.videoCodec = video;
 	  roomId = display.split("§")[5]
-	  if((parseInt(roomId) % 12) + 1 === parseInt(getUrlVars()["display"]) ) {
-		  remoteFeed.send({ message: subscribe });
-	  }
+    uuid = display.split("§")[1]
+	  //if((parseInt(roomId) % 12) + 1 === parseInt(getUrlVars()["display"]) ) {
+		//  remoteFeed.send({ message: subscribe });
+	  //}
+    if(uuids.includes(uuid)){
+      remoteFeed.send({ message: subscribe });
+    }
       
     },
     error: function (error) {
@@ -699,7 +710,7 @@ console.log(id, display, audio, video);
     },
     onremotestream: function (stream) {
     var name = display.split("§")[0];
-	  streamAttacher(remoteFeed, name)
+	  streamAttacher(remoteFeed, display)
 	  //console.log('^^^^^^^^^^^^^', remoteFeed)
       //console.log("Remote feed #" + remoteFeed.rfindex + ", stream:", stream);
 	  /*
@@ -766,6 +777,8 @@ console.log(id, display, audio, video);
     console.log(remoteFeed.rfindex, id, remoteFeed)
     $("#video-" + remoteFeed.id).remove();
     $("#d-" + remoteFeed.id).remove();
+    $("#pr-"+uuid).show();
+    $("#pri-"+uuid).addClass("Camera");
     disher("", "Dish", "Camera");
       //if (remoteFeed.spinner) remoteFeed.spinner.stop();
       //remoteFeed.spinner = null;
@@ -831,12 +844,13 @@ function vstreamAttacher(feed, display) {
 
 function cardMaker(display){
   if(display) {
-    var uuid = display.split("§")[1]
-    $.get( "/v1/users/user_info/"+uuid, function( res ) {
-      console.log(res.data)
-      $( "#Dish" ).append("<div class='Camera d-flex flex-column justify-content-center align-items-center' data-content='"+display.split("§")[0]+"' style='background-color: #444;'><div class='card' style='height: 100%; background: rgba(0,0,0,0.6);'><img  style='height: 100%' src='"+ res.data.cover+"'</div></div></div>");
-      disher("", "Dish", "Camera");
-    });
+    var uuid = display.split("§")[1];
+    $('#img-'+uuid).css('opacity', '1');
+    //$.get( "/v1/users/user_info/"+uuid, function( res ) {
+    //  console.log(res.data)
+    //  $( "#Dish" ).append("<div class='Camera d-flex flex-column justify-content-center align-items-center' data-content='"+display.split("§")[0]+"' style='background-color: #444;'><div class='card' style='height: 100%; background: rgba(0,0,0,0.6);'><img  style='height: 100%' src='"+ res.data.cover+"'</div></div></div>");
+    //  disher("", "Dish", "Camera");
+    //});
   }
   
 }
@@ -855,11 +869,15 @@ function streamAttacher(feed, display = "") {
 
   if (feed.id && feed.webrtcStuff && feed.webrtcStuff.remoteStream) {
     if ($("#video-" + feed.id).length == 0) {
-      $("#Dish").append(
+      var name = display.split("§")[0];
+      var uuid = display.split("§")[1];
+      $("#pr-"+uuid).hide();
+      $("#pri-"+uuid).removeClass("Camera");
+      $("#container-"+uuid).append(
         "<div id='d-" +
           feed.id +
           "' class='Camera' data-content='" +
-          display +
+          name +
           "'></div>"
       );
     }
@@ -883,11 +901,15 @@ function streamAttacher(feed, display = "") {
       }
     } else {
       if ($("#video-" + feed.id).length == 0) {
-        $("#Dish").append(
+        console.log('>>>>>>>>>>>>>>>>>>')
+        var name = display.split("§")[0];
+        var uuid = display.split("§")[1];
+        $("#pr-"+uuid).hide();
+        $("#container-"+uuid).append(
           "<div id='d-" +
             feed.id +
             "' class='Camera' data-content='" +
-            display +
+            name +
             "'></div>"
         );
       }

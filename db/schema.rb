@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_17_094136) do
+ActiveRecord::Schema.define(version: 2021_09_19_145644) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -180,6 +180,9 @@ ActiveRecord::Schema.define(version: 2021_09_17_094136) do
     t.boolean "internal"
     t.boolean "bigblue"
     t.boolean "sata"
+    t.json "sata_displays"
+    t.integer "per_display"
+    t.integer "number_of_sata_displays"
     t.index ["event_id"], name: "index_meetings_on_event_id"
     t.index ["user_id"], name: "index_meetings_on_user_id"
   end

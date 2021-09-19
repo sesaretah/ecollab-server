@@ -60,6 +60,12 @@ class Meeting < ApplicationRecord
       .where("attendable_type = ? and attendances.user_id = ?", "Meeting", user_id).order("attendances.created_at desc").limit(10)
   end
 
+  def attendees
+    user_ids = self.attendances.order("id asc").pluck(:user_id)
+    profiles = Profile.where("user_id in (?)", user_ids).order("name asc")
+    return profiles
+  end
+
   def self.date_range(s, e, status = "all", user_id = nil)
     if status.blank?
       status = "all"

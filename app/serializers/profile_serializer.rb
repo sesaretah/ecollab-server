@@ -5,9 +5,14 @@ class ProfileSerializer < ActiveModel::Serializer
   attributes :id, :name, :surename, :fullname, :bio,
              :twitter, :instagram, :telegram, :phone, :linkdin, :email,
              :avatar, :last_login, :editable, :country, :initials, :tags,
-             :user_id, :short_bio, :tags, :abilities, :page, :pages, :cover
+             :user_id, :short_bio, :tags, :abilities, :page, :pages, :cover,
+             :uuid
 
   belongs_to :user
+
+  def uuid
+    object.user.uuid if !object.user.blank?
+  end
 
   def page
     if scope && scope[:page]
@@ -72,6 +77,8 @@ class ProfileSerializer < ActiveModel::Serializer
       Rails.application.routes.default_url_options[:host] + rails_representation_url(upload.attached_document.variant(
         crop: "#{dimensions}+#{coord}",
       ).processed, only_path: true)
+    else
+      Rails.application.routes.default_url_options[:host] + "/empty.png"
     end
   end
 end

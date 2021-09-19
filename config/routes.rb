@@ -65,8 +65,10 @@ Rails.application.routes.draw do
 
     get "/meetings/join_bigblue/:id", to: "meetings#join_bigblue"
     get "/meetings/my", to: "meetings#my"
-
     get "/meetings/search", to: "meetings#search"
+
+    get "/rooms/profile_display", to: "rooms#profile_display"
+
     get "/events/search", to: "events#search"
     get "/events/related", to: "events#related"
     get "/events/owner", to: "events#owner"

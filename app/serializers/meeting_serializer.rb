@@ -7,7 +7,8 @@ class MeetingSerializer < ActiveModel::Serializer
              :start_day, :end_day, :cover, :truncated_info, :is_admin,
              :room_uuid, :page, :pages, :attending,
              :internal, :bigblue, :sata, :is_presenter,
-             :is_moderator, :is_speaker, :attendees_count
+             :is_moderator, :is_speaker, :attendees_count,
+             :number_of_sata_displays, :per_display
   belongs_to :event, serializer: EventIndexSerializer
   has_many :flyers, serializer: FlyerSerializer
   has_many :uploads, serializer: UploadSerializer
