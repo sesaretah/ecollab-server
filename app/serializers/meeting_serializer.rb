@@ -78,6 +78,13 @@ class MeetingSerializer < ActiveModel::Serializer
       end
     end
 
+    if scope && scope[:user_id]
+      user = User.find_by_id(scope[:user_id])
+      if !user.blank? && object.event.is_admin(scope[:user_id])
+        return true
+      end
+    end
+
     if scope && scope[:user_id] && object.is_admin(scope[:user_id])
       return true
     else
