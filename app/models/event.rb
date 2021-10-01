@@ -30,7 +30,7 @@ class Event < ApplicationRecord
   end
 
   def self.owner(user_id)
-    Event
+    self
       .left_joins(:attendances)
       .where("attendable_type = ? and attendances.user_id = ? and duty = ?", "Event", user_id, "moderator")
   end
@@ -40,7 +40,7 @@ class Event < ApplicationRecord
   end
 
   def self.related(user_id)
-    Event
+    self
       .left_joins(:attendances)
       .where("attendable_type = ? and attendances.user_id = ?", "Event", user_id)
   end
@@ -58,5 +58,21 @@ class Event < ApplicationRecord
     private_ids = self.where("id in (?) and is_private is true", all_ids).pluck(:id)
     event_ids = Attendance.where("attendable_id in (?) and attendable_type = ? and user_id = ?", private_ids, "Event", user_id).pluck(:attendable_id)
     return all_ids - private_ids + event_ids
+  end
+
+  def self.search_w_params(params, user, per_page)
+    with_hash = {}
+    event_ids = self.date_range(params[:start_from], params[:start_to], user.id)
+    with_hash["tag_ids"] = Tag.title_to_id(params[:tags].split(",")) if params[:tags] && params[:tags].length > 0
+    with_hash["id_number"] = event_ids
+    events = self.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => per_page, :order => "start_date ASC"
+    counter = self.search_count params[:q], star: true, with: with_hash
+    pages = (counter / per_page.to_f).ceil
+    return { events: events, pages: pages }
+  end
+
+  def cover
+    upload = Upload.where("uploadable_type = ? and uploadable_id = ? and upload_type = ?", "Event", self.id, "cover").last
+    return upload.cropped_url if !upload.blank?
   end
 end

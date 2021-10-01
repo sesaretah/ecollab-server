@@ -2,18 +2,8 @@ class V1::MeetingsController < ApplicationController
   # before_action :fix_date, only: [:create, :update]
 
   def search
-    with_hash = {}
-    with_hash["tag_ids"] = Tag.title_to_id(params[:tags].split(",")) if params[:tags] && params[:tags].length > 0
-    #event = Event.where(shortname: params[:event_name]).first if params[:event_name] != ""
-    #with_hash["event_id"] = event.id if !event.blank?
-    with_hash["event_id"] = params[:event_id].to_i if params[:event_id] && params[:event_id].length > 0 && params[:event_id] != "0" && params[:event_id] != "null"
-    meeting_ids = Meeting.date_range(params[:start_from], params[:start_to], params[:registration_status], current_user.id)
-    with_hash["id_number"] = meeting_ids
-    #with_hash["start_time"] = Time.at(params[:start_from].to_i / 1000).to_datetime..Time.at(params[:start_to].to_i / 1000).to_datetime if params[:start_from]
-    meetings = Meeting.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => 12, :order => "start_time ASC"
-    counter = Meeting.search_count params[:q], star: true, with: with_hash
-    pages = (counter / 12.to_f).ceil
-    render json: { data: ActiveModel::SerializableResource.new(meetings, scope: { page: params[:page].to_i, pages: pages, user_id: current_user.id }, each_serializer: MeetingIndexSerializer).as_json, klass: "Meeting" }, status: :ok
+    results = Meeting.search_w_params(params, current_user, 12)
+    render json: { data: ActiveModel::SerializableResource.new(results[:meetings], scope: { page: params[:page].to_i, pages: results[:pages], user_id: current_user.id }, each_serializer: MeetingIndexSerializer).as_json, klass: "Meeting" }, status: :ok
   end
 
   def my

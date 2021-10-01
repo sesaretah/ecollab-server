@@ -20,7 +20,7 @@ class Meeting < ApplicationRecord
   after_create :add_admin
 
   def setup_room
-    Room.create(title: self.title, is_private: self.is_private, meeting_id: self.id, moderator_ids: [self.user_id])
+    #Room.create(title: self.title, is_private: self.is_private, meeting_id: self.id, moderator_ids: [self.user_id])
   end
 
   def add_admin
@@ -92,5 +92,22 @@ class Meeting < ApplicationRecord
       meetings = publics - registered
     end
     return meetings
+  end
+
+  def self.search_w_params(params, user, per_page)
+    with_hash = {}
+    with_hash["tag_ids"] = Tag.title_to_id(params[:tags].split(",")) if params[:tags] && params[:tags].length > 0
+    with_hash["event_id"] = params[:event_id].to_i if params[:event_id] && params[:event_id].length > 0 && params[:event_id] != "0" && params[:event_id] != "null"
+    meeting_ids = self.date_range(params[:start_from], params[:start_to], params[:registration_status], user.id)
+    with_hash["id_number"] = meeting_ids
+    meetings = self.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => per_page, :order => "start_time ASC"
+    counter = self.search_count params[:q], star: true, with: with_hash
+    pages = (counter / per_page.to_f).ceil
+    return { meetings: meetings, pages: pages }
+  end
+
+  def cover
+    upload = Upload.where("uploadable_type = ? and uploadable_id = ? and upload_type = ?", "Meeting", self.id, "cover").last
+    return upload.cropped_url if !upload.blank?
   end
 end

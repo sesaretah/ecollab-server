@@ -1,13 +1,7 @@
 class V1::EventsController < ApplicationController
   def search
-    with_hash = {}
-    event_ids = Event.date_range(params[:start_from], params[:start_to], current_user.id)
-    with_hash["tag_ids"] = Tag.title_to_id(params[:tags].split(",")) if params[:tags] && params[:tags].length > 0
-    with_hash["id_number"] = event_ids
-    events = Event.search params[:q], star: true, with: with_hash, :page => params[:page], :per_page => 6, :order => "start_date ASC"
-    counter = Event.search_count params[:q], star: true, with: with_hash
-    pages = (counter / 6.to_f).ceil
-    render json: { data: ActiveModel::SerializableResource.new(events, scope: { page: params[:page].to_i, pages: pages, user_id: current_user.id }, each_serializer: EventIndexSerializer).as_json, klass: "Event" }, status: :ok
+    results = Event.search_w_params(params, current_user, 6)
+    render json: { data: ActiveModel::SerializableResource.new(results[:events], scope: { page: params[:page].to_i, pages: results[:pages], user_id: current_user.id }, each_serializer: EventIndexSerializer).as_json, klass: "Event" }, status: :ok
   end
 
   def search_shortname

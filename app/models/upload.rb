@@ -1,8 +1,10 @@
 class Upload < ApplicationRecord
+  include Rails.application.routes.url_helpers
+
   belongs_to :uploadable, polymorphic: true, optional: true
   has_one_attached :attached_document
   before_create :assign_uuid
-  # after_commit :prepare_pdf, on: :create
+
   belongs_to :user, optional: true
 
   def assign_uuid
@@ -13,12 +15,18 @@ class Upload < ApplicationRecord
     ActiveStorage::Blob.service.path_for(attached_document.key)
   end
 
-  #def prepare_pdf
-  #  ConvertJob.perform_later(self.id)
-  #end
-
   def check_cropping
     self.crop_settings = { x: crop_x, y: crop_y, w: crop_w, h: crop_h } if cropping?
+  end
+
+  def cropped_url
+    if self.attached_document.attached? && !self.crop_settings.blank?
+      dimensions = "#{self.crop_settings["width"]}x#{self.crop_settings["height"]}"
+      coord = "#{self.crop_settings["x"]}+#{self.crop_settings["y"]}"
+      Rails.application.routes.default_url_options[:host] + rails_representation_url(self.attached_document.variant(
+        crop: "#{dimensions}+#{coord}",
+      ).processed, only_path: true)
+    end
   end
 
   def cropping?

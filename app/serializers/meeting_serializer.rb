@@ -48,26 +48,17 @@ class MeetingSerializer < ActiveModel::Serializer
   end
 
   def start_day
+    #We should internationalize this, for now lets focus on Tehran
     object.start_time.in_time_zone("Tehran").beginning_of_day
   end
 
   def end_day
+    #We should internationalize this, for now lets focus on Tehran
     object.end_time.in_time_zone("Tehran").end_of_day
   end
 
   def truncated_info
     truncate(object.info, :length => 200)
-  end
-
-  def cover
-    upload = Upload.where("uploadable_type = ? and uploadable_id = ? and upload_type = ?", "Meeting", object.id, "cover").last
-    if !upload.blank? && upload.attached_document.attached? && !upload.crop_settings.blank?
-      dimensions = "#{upload.crop_settings["width"]}x#{upload.crop_settings["height"]}"
-      coord = "#{upload.crop_settings["x"]}+#{upload.crop_settings["y"]}"
-      Rails.application.routes.default_url_options[:host] + rails_representation_url(upload.attached_document.variant(
-        crop: "#{dimensions}+#{coord}",
-      ).processed, only_path: true)
-    end
   end
 
   def is_admin
