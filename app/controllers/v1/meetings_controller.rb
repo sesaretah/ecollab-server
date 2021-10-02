@@ -1,6 +1,4 @@
 class V1::MeetingsController < ApplicationController
-  # before_action :fix_date, only: [:create, :update]
-
   def search
     results = Meeting.search_w_params(params, current_user, 12)
     render json: { data: ActiveModel::SerializableResource.new(results[:meetings], scope: { page: params[:page].to_i, pages: results[:pages], user_id: current_user.id }, each_serializer: MeetingIndexSerializer).as_json, klass: "Meeting" }, status: :ok
@@ -19,7 +17,7 @@ class V1::MeetingsController < ApplicationController
   def join_bigblue
     @meeting = Meeting.find(params[:id])
     room = @meeting.room
-    room.create_bigblue if !room.is_bigblue_running #&& @meeting.is_presenter(current_user.id)
+    room.create_bigblue if !room.is_bigblue_running
     room.meeting_attendees_count >= @meeting.capacity ? full = true : full = false
     DateTime.now >= @meeting.start_time && DateTime.now <= @meeting.end_time ? timely = true : timely = false
     url = room.join_bigblue(@meeting.user_duty(current_user.id), URI::escape(current_user.profile.name))

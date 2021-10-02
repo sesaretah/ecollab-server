@@ -34,7 +34,6 @@ class V1::FlyersController < ApplicationController
     @advertisable = @flyer.advertisable_type.classify.constantize.find_by_id(@flyer.advertisable_id)
     if @flyer.destroy
       render json: { data: "#{@advertisable.class.name}Serializer".classify.safe_constantize.new(@advertisable).as_json, klass: "#{@advertisable.class.name}" }, status: :ok
-      # render json: { data: @flyer, klass: "Flyer" }, status: :ok
     else
       render json: { data: @flyer.errors.full_messages }, status: :ok
     end

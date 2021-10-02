@@ -1,13 +1,5 @@
 class V1::UsersController < ApplicationController
   include JWTWrapper
-  #def login
-  #  if User.find_by_email(params['email']).try(:valid_password?, params[:password])
-  #    @user = User.find_by_email(params['email'])
-  #    render :json => {data: {result: 'OK', token: JWTWrapper.encode({ user_id: @user.id }), user_id: @user.id}, klass: 'User'}.to_json , :callback => params['callback']
-  #  else
-  #    render :json => {result: 'ERROR',  error: I18n.t(:doesnt_match) }.to_json , status: :unprocessable_entity
-  #  end
-  #end
 
   def user_info
     user = User.find_by_uuid(params["uuid"])
@@ -47,7 +39,6 @@ class V1::UsersController < ApplicationController
     user = User.create(email: params["email"], password: params["password"], password_confirmation: params["password"], last_login: DateTime.now)
     if !user.blank?
       Profile.create(name: params["name"], user_id: user.id)
-      #user.notify_user
     end
     if !user.blank?
       if user.id != nil
@@ -59,16 +50,6 @@ class V1::UsersController < ApplicationController
       render :json => { result: "ERROR", reason: I18n.t(:doesnt_match) }.to_json, status: :unprocessable_entity
     end
   end
-
-  # def sign_up
-  #   @user = User.new(email: params['email'], password: params['password'], password_confirmation: params['password_confirmation'])
-  #   if @user.save
-  #     Profile.create(name: params['name'], surename: params['surename'], user_id: @user.id)
-  #     render :json => { data: {result: 'OK', token: JWTWrapper.encode({ user_id: @user.id }), user_id: @user.id}, klass: 'User'}.to_json, :callback => params['callback']
-  #   else
-  #     render :json => {result: 'ERROR', error: @user.errors }.to_json , status: :unprocessable_entity
-  #   end
-  # end
 
   def validate_token
     if !current_user.blank?
