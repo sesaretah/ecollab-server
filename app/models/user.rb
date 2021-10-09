@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  require "csv"
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -21,6 +22,15 @@ class User < ApplicationRecord
 
   def assign_uuid
     self.uuid = SecureRandom.uuid
+  end
+
+  def self.csv_import
+    csv_text = File.read("#{Rails.root}/public/users.csv")
+    csv = CSV.parse(csv_text, :headers => true)
+    csv.each do |row|
+      user = User.create(email: "#{row[6]}@e-event.ir", password: row[4], password_confirmation: row[4], verified: true)
+      Profile.create(user_id: user.id, name: row[1])
+    end
   end
 
   def assign_default_role

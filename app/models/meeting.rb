@@ -20,7 +20,7 @@ class Meeting < ApplicationRecord
   after_create :add_admin
 
   def setup_room
-    #Room.create(title: self.title, is_private: self.is_private, meeting_id: self.id, moderator_ids: [self.user_id])
+    Room.create(title: self.title, is_private: self.is_private, meeting_id: self.id, moderator_ids: [self.user_id])
   end
 
   def add_admin

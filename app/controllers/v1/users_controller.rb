@@ -9,6 +9,7 @@ class V1::UsersController < ApplicationController
   end
 
   def login
+    params["email"] = params["email"].strip + "@e-event.ir" if params["email"].strip != ~/^(.+)@(.+)$/
     user = User.find_by_email(params["email"].strip)
     user.notify_user if !user.blank? && params["verification"].blank? && !user.verified
     if !user.blank? #&& user.valid_password?(params["password"].strip)
