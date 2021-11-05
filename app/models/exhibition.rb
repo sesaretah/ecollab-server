@@ -47,10 +47,10 @@ class Exhibition < ApplicationRecord
     with_hash["activated"] = true if user.blank? || user.ability.blank? || !user.ability.administration
     with_hash["tag_ids"] = Tag.title_to_id(params[:tags].split(",")) if params[:tags] && params[:tags].length > 0
     with_hash["event_id"] = params[:event_id].to_i if params[:event_id] && params[:event_id].length > 0 && params[:event_id] != "0" && params[:event_id] != "null"
-    if params[:event_id] && params[:event_id].length > 0 && params[:event_id] != "0" && params[:event_id] != "null"
-      exhibition_ids = self.attending_ids(user.id)
-      with_hash["id_number"] = exhibition_ids
-    end
+    #if params[:event_id] && params[:event_id].length > 0 && params[:event_id] != "0" && params[:event_id] != "null"
+    #  exhibition_ids = self.attending_ids(user.id)
+    #  with_hash["id_number"] = exhibition_ids
+    #end
     exhibitions = self.search params[:q], star: true, with: with_hash, :order => :id, :page => params[:page], :per_page => per_page
     counter = self.search_count params[:q], star: true, with: with_hash
     pages = (counter / per_page.to_f).ceil
