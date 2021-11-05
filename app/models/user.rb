@@ -25,7 +25,7 @@ class User < ApplicationRecord
   end
 
   def self.csv_import
-    csv_text = File.read("#{Rails.root}/public/users.csv")
+    csv_text = File.read("#{Rails.root}/public/users1.csv")
     csv = CSV.parse(csv_text, :headers => true)
     csv.each do |row|
       user = User.create(email: "#{row[6]}@e-event.ir", password: row[4], password_confirmation: row[4], verified: true)
