@@ -2,7 +2,7 @@ class ExhibitionIndexSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
   include ActionView::Helpers::TextHelper
   attributes :id, :title, :info, :tags, :cover, :truncated_info,
-             :is_admin, :room_id, :room_uuid, :page, :pages, :is_active
+             :is_admin, :room_id, :room_uuid, :page, :pages, :is_active, :event_id
 
   belongs_to :event, serializer: EventIndexSerializer
 

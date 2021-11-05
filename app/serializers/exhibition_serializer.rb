@@ -3,7 +3,7 @@ class ExhibitionSerializer < ActiveModel::Serializer
   include ActionView::Helpers::TextHelper
   attributes :id, :title, :info, :tags, :cover, :truncated_info,
              :is_admin, :attendees, :room_id, :room_uuid, :page, :pages,
-             :is_active
+             :is_active, :event_id
 
   belongs_to :event, serializer: EventIndexSerializer
   has_many :flyers, serializer: FlyerSerializer

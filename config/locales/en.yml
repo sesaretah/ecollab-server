@@ -31,3 +31,9 @@
 
 en:
   hello: "Hello world"
+  notification: 'Notification'
+  thanks: 'Thanks'
+  view: 'View'
+  need_help: 'Do you need help?'
+  contact_us: 'Contact us'
+  your_access_code_is: 'Your access code is'
