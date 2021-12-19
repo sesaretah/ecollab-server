@@ -10,7 +10,7 @@ class Room < ApplicationRecord
   belongs_to :meeting, optional: true
   belongs_to :exhibition, optional: true
 
-  Domain = "http://webinar3.ut.ac.ir/bigbluebutton/api/"
+  Domain = "https://webinar3.ut.ac.ir/bigbluebutton/api/"
   Se = "f4c70b0793683eaf0cc8e4bc49147420f734cbc546c63b26ff5cc0412764ec49"
 
   def set_uuid
