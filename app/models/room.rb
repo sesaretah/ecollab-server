@@ -82,7 +82,7 @@ class Room < ApplicationRecord
   end
 
   def bigblue_recordings
-    cheksum_string = "getRecordingsmeetingID=" + self.uuid
+    cheksum_string = "getRecordingsmeetingID=" + self.uuid + Se
     cheksum = Digest::SHA1.hexdigest cheksum_string
     url = Domain + "getRecordings?meetingID=" + self.uuid + "&checksum=" + cheksum
     return url
