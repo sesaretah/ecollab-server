@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: attendances
+#
+#  id              :bigint           not null, primary key
+#  user_id         :integer
+#  attendable_id   :integer
+#  attendable_type :string
+#  label_id        :integer
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  role_id         :integer
+#  duty            :string
+#
 class Attendance < ApplicationRecord
   belongs_to :attendable, polymorphic: true
   belongs_to :label, optional: true
@@ -13,6 +27,9 @@ class Attendance < ApplicationRecord
 
   def profile
     self.user.profile if !self.user.blank? && !self.user.profile.blank?
+  end
+
+  def user_attendances(user:, klass:)
   end
 
   def attendable_owner

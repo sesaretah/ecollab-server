@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: events
+#
+#  id            :bigint           not null, primary key
+#  title         :string
+#  event_type    :string
+#  info          :text
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  user_id       :integer
+#  is_private    :boolean
+#  crop_settings :json
+#  start_date    :date
+#  end_date      :date
+#  shortname     :string
+#
 class EventSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
   include ActionView::Helpers::TextHelper

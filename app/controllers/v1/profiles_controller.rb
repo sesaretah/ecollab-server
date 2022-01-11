@@ -40,8 +40,9 @@ class V1::ProfilesController < ApplicationController
 
   def update
     @profile = current_user.profile
-    Tagging.extract_tags(params[:tags], "User", current_user.id)
+
     if @profile.update_attributes(profile_params)
+      Extractor::TaggingExtractor.new(titles: params[:tags], taggable: current_user).call
       render json: { data: ProfileSerializer.new(@profile).as_json, klass: "Profile" }, status: :ok
     end
   end

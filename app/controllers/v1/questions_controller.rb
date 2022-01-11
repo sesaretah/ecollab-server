@@ -18,15 +18,16 @@ class V1::QuestionsController < ApplicationController
     @question = Question.new(question_params)
     @question.user_id = current_user.id
     if @question.save
-      Tagging.extract_tags(params[:tags], "Question", @question.id)
+      Extractor::TaggingExtractor.new(titles: params[:tags], taggable: @question).call
       render json: { data: QuestionSerializer.new(@question).as_json, klass: "Question" }, status: :ok
     end
   end
 
   def update
     @question = Question.find(params[:id])
-    Tagging.extract_tags(params[:tags], "Question", @question.id)
+
     if @question.update_attributes(question_params)
+      Extractor::TaggingExtractor.new(titles: params[:tags], taggable: @question).call
       render json: { data: QuestionSerializer.new(@question).as_json, klass: "Question" }, status: :ok
     end
   end

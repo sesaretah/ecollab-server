@@ -1,6 +1,7 @@
 class V1::ExhibitionsController < ApplicationController
   def search
-    results = Exhibition.search_w_params(params, current_user, 12)
+    results = FullTextSearcher::Searcher.new(params: params, user: current_user, per_page: 12, searchable: Exhibition, with: %w(tag_ids activated)).call
+    #results = Exhibition.search_w_params(params, current_user, 12)
     render json: { data: ActiveModel::SerializableResource.new(results[:exhibitions], scope: { page: params[:page].to_i, pages: results[:pages] }, each_serializer: ExhibitionIndexSerializer).as_json, klass: "Exhibition" }, status: :ok
   end
 
@@ -24,7 +25,7 @@ class V1::ExhibitionsController < ApplicationController
     @exhibition = Exhibition.new(exhibition_params)
     @exhibition.user_id = current_user.id
     if @exhibition.save
-      Tagging.extract_tags(params[:tags], "Exhibition", @exhibition.id)
+      Extractor::TaggingExtractor.new(titles: params[:tags], taggable: @exhibition).call
       render json: { data: ExhibitionSerializer.new(@exhibition, scope: { user_id: current_user.id }).as_json, klass: "Exhibition" }, status: :ok
     end
   end
@@ -32,7 +33,7 @@ class V1::ExhibitionsController < ApplicationController
   def update
     @exhibition = Exhibition.find(params[:id])
     if @exhibition.update_attributes(exhibition_params)
-      Tagging.extract_tags(params[:tags], "Exhibition", @exhibition.id)
+      Extractor::TaggingExtractor.new(titles: params[:tags], taggable: @exhibition).call
       render json: { data: ExhibitionSerializer.new(@exhibition, scope: { user_id: current_user.id }).as_json, klass: "Exhibition" }, status: :ok
     end
   end

@@ -5,7 +5,7 @@ class V1::TagsController < ApplicationController
   end
 
   def top
-    tags = Tag.top_used
+    tags = Statistic::TopTags.new.top_used
     render json: { data: ActiveModel::SerializableResource.new(tags, each_serializer: TagSerializer).as_json, klass: "Tag" }, status: :ok
   end
 

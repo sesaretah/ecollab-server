@@ -1,11 +1,11 @@
 class V1::MeetingsController < ApplicationController
   def search
-    results = Meeting.search_w_params(params, current_user, 12)
+    results = FullTextSearcher::Searcher.new(params: params, user: current_user, per_page: 12, searchable: Meeting).call
     render json: { data: ActiveModel::SerializableResource.new(results[:meetings], scope: { page: params[:page].to_i, pages: results[:pages], user_id: current_user.id }, each_serializer: MeetingIndexSerializer).as_json, klass: "Meeting" }, status: :ok
   end
 
   def my
-    meetings = Meeting.user_meetings(current_user.id)
+    meetings = Attendances::UserList.new(klass: Meeting, user: current_user).all
     render json: { data: ActiveModel::SerializableResource.new(meetings, scope: { user_id: current_user.id }, each_serializer: MeetingIndexSerializer).as_json, klass: "Meeting" }, status: :ok
   end
 
@@ -16,31 +16,20 @@ class V1::MeetingsController < ApplicationController
 
   def join_bigblue
     @meeting = Meeting.find(params[:id])
-    room = @meeting.room
-    room.create_bigblue if !room.is_bigblue_running
-    room.meeting_attendees_count >= @meeting.capacity ? full = true : full = false
-    DateTime.now >= @meeting.start_time && DateTime.now <= @meeting.end_time ? timely = true : timely = false
-    url = room.join_bigblue(@meeting.user_duty(current_user.id), URI::escape(current_user.profile.name))
-    render json: { data: { url: url, full: full, timely: timely }, klass: "MeetingUrl" }, status: :ok
+    result = Handler::BigBlueHandler::Joiner.new(meeting: @meeting, user: current_user).call
+    render json: { data: result, klass: "MeetingUrl" }, status: :ok
   end
 
   def index
-    today = DateTime.current.beginning_of_day
-    if params[:event_id].blank?
-      meetings = Meeting.where("(start_time <= ? and end_time >= ?) or start_time >= ?", today, today, today).order("start_time").paginate(page: params[:page], per_page: 12)
-      pages = (Meeting.where("(start_time <= ? and end_time >= ?) or start_time >= ?", today, today, today).count / 12.to_f).ceil
-    else
-      meetings = Meeting.where(event_id: params[:event_id]).order("start_time").paginate(page: params[:page], per_page: 12)
-      pages = (Meeting.where(event_id: params[:event_id]).count / 12.to_f).ceil
-    end
-    render json: { data: ActiveModel::SerializableResource.new(meetings, scope: { page: params[:page].to_i, pages: pages, user_id: current_user.id }, each_serializer: MeetingIndexSerializer).as_json, klass: "Meeting" }, status: :ok
+    result = Preparer::MeetingIndex.new(params: params)
+    render json: { data: ActiveModel::SerializableResource.new(result[:meetings], scope: { page: params[:page].to_i, pages: result[:pages], user_id: current_user.id }, each_serializer: MeetingIndexSerializer).as_json, klass: "Meeting" }, status: :ok
   end
 
   def create
     @meeting = Meeting.new(meeting_params)
     @meeting.user_id = current_user.id
     if @meeting.save
-      Tagging.extract_tags(params[:tags], "Meeting", @meeting.id)
+      Extractor::TaggingExtractor.new(titles: params[:tags], taggable: @meeting).call
       render json: { data: MeetingSerializer.new(@meeting).as_json, klass: "Meeting" }, status: :ok
     end
   end
@@ -48,7 +37,7 @@ class V1::MeetingsController < ApplicationController
   def update
     @meeting = Meeting.find(params[:id])
     if @meeting.update_attributes(meeting_params)
-      Tagging.extract_tags(params[:tags], "Meeting", @meeting.id)
+      Extractor::TaggingExtractor.new(titles: params[:tags], taggable: @meeting).call
       render json: { data: MeetingSerializer.new(@meeting).as_json, klass: "Meeting" }, status: :ok
     end
   end

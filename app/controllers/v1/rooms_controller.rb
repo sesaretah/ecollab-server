@@ -6,16 +6,11 @@ class V1::RoomsController < ApplicationController
 
   def profile_display
     room = Room.where(vuuid: params[:id]).first
-    display = params["display"].to_i
-    meeting = room.meeting
-    pp = meeting.per_display
-    if display <= meeting.number_of_sata_displays
-      profiles = meeting.attendees[((display - 1) * pp)..((display * pp) - 1)]
-      if !profiles.blank?
-        render json: { data: ActiveModel::SerializableResource.new(profiles, each_serializer: ProfileSerializer).as_json, klass: "Profile" }, status: :ok
-      else
-        render json: { data: [], klass: "Profile" }, status: :ok
-      end
+    profiles = Preparer::RoomPreparer::ProfileDisplayPreparer.new(params: params, room: room).call
+    if !profiles.blank?
+      render json: { data: ActiveModel::SerializableResource.new(profiles, each_serializer: ProfileSerializer).as_json, klass: "Profile" }, status: :ok
+    else
+      render json: { data: [], klass: "Profile" }, status: :ok
     end
   end
 

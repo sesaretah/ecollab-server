@@ -1,6 +1,7 @@
 class V1::EventsController < ApplicationController
   def search
-    results = Event.search_w_params(params, current_user, 6)
+    results = FullTextSearcher::Searcher.new(params: params, user: current_user, per_page: 12, timescale: "date", searchable: Event).call
+    #results = Event.search_w_params(params, current_user, 6)
     render json: { data: ActiveModel::SerializableResource.new(results[:events], scope: { page: params[:page].to_i, pages: results[:pages], user_id: current_user.id }, each_serializer: EventIndexSerializer).as_json, klass: "Event" }, status: :ok
   end
 
@@ -22,7 +23,7 @@ class V1::EventsController < ApplicationController
 
   def meetings
     @event = Event.find(params[:id])
-    meetings = @event.meetings.joins(:taggings).where("start_time >= ? and end_time <= ? and taggings.tag_id in (?)", Time.at(params[:start_time].to_i / 1000), Time.at(params[:end_time].to_i / 1000), params[:tag_ids].split(","))
+    meetings = @event.meetings.includes(:taggings).where("start_time >= ? and end_time <= ? and taggings.tag_id in (?)", Time.at(params[:start_time].to_i / 1000), Time.at(params[:end_time].to_i / 1000), params[:tag_ids].split(","))
     render json: { data: ActiveModel::SerializableResource.new(meetings, user_id: current_user.id, each_serializer: MeetingIndexSerializer, scope: { user_id: current_user.id }).as_json, klass: "Meeting" }, status: :ok
   end
 
@@ -57,15 +58,16 @@ class V1::EventsController < ApplicationController
     @event = Event.new(event_params)
     @event.user_id = current_user.id
     if @event.save
-      Tagging.extract_tags(params[:tags], "Event", @event.id)
+      Extractor::TaggingExtractor.new(titles: params[:tags], taggable: @event).call
       render json: { data: EventSerializer.new(@event, scope: { user_id: current_user.id }).as_json, klass: "Event" }, status: :ok
     end
   end
 
   def update
     @event = Event.find(params[:id])
-    Tagging.extract_tags(params[:tags], "Event", @event.id)
+
     if @event.update_attributes(event_params)
+      Extractor::TaggingExtractor.new(titles: params[:tags], taggable: @event).call
       render json: { data: EventSerializer.new(@event, scope: { user_id: current_user.id }).as_json, klass: "Event" }, status: :ok
     end
   end

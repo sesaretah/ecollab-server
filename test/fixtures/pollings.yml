@@ -1,4 +1,15 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# == Schema Information
+#
+# Table name: pollings
+#
+#  id         :bigint           not null, primary key
+#  poll_id    :integer
+#  user_id    :integer
+#  outcome    :integer
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  outcomes   :json
+#
 
 one:
   poll_id: 1

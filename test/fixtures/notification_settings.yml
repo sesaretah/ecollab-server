@@ -1,4 +1,13 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# == Schema Information
+#
+# Table name: notification_settings
+#
+#  id                   :bigint           not null, primary key
+#  user_id              :integer
+#  notification_setting :json
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#
 
 one:
   user_id: 1

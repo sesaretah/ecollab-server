@@ -19,6 +19,14 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
   end
 
+  config.before(:all, callbacks: true) do
+    ActiveRecord::Base.skip_callbacks = false
+  end
+
+  config.after(:all, callbacks: true) do
+    ActiveRecord::Base.skip_callbacks = true
+  end
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

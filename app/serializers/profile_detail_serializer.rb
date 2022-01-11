@@ -74,12 +74,12 @@ class ProfileDetailSerializer < ActiveModel::Serializer
   end
 
   def recent_meetings
-    meetings = Meeting.user_recent_meetings(object.user.id) if !object.user.blank?
+    meetings = Attendances::UserList.new(klass: Meeting, user: object.user).recent(5) if !object.user.blank?
     return ActiveModel::SerializableResource.new(meetings, scope: { user_id: scope[:user_id] }, each_serializer: MeetingIndexSerializer).as_json
   end
 
   def recent_events
-    events = Event.user_recent_events(object.user.id) if !object.user.blank?
+    events = Attendances::UserList.new(klass: Event, user: object.user).recent(5) if !object.user.blank?
     return ActiveModel::SerializableResource.new(events, scope: { user_id: scope[:user_id] }, each_serializer: EventIndexSerializer).as_json
   end
 
